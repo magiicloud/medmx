@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int        @id @default(autoincrement())
+  email           String     @unique
+  name            String?
+  profile_img_url String?
+  userdrugs       UserDrug[]
+}
+
+model Drug {
+  id                         Int           @id @default(autoincrement())
+  drugName                   String        @unique
+  pilLink                    String
+  drugImagesLink             String
+  counsellingPointsText      String
+  counsellingPointsVoiceLink String
+  otherResources             String?
+  acute                      Boolean       @default(false)
+  chronic                    Boolean       @default(false)
+  drugClasses                DrugToClass[] // Relation to junction table
+  userdrugs                  UserDrug[]
+}
+
+model DrugClass {
+  id    Int           @id @default(autoincrement())
+  name  String
+  drugs DrugToClass[] // Relation to junction table
+}
+
+model DrugToClass {
+  drug        Drug      @relation(fields: [drugId], references: [id])
+  drugId      Int 
+  drugClass   DrugClass @relation(fields: [drugClassId], references: [id])
+  drugClassId Int
+
+  @@id([drugId, drugClassId]) // Composite primary key
+}
+
+model UserDrug {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  drug   Drug @relation(fields: [drugId], references: [id], onDelete: Cascade)
+  drugId Int
+}
