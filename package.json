@@ -12,16 +12,21 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@google-cloud/documentai": "^8.6.0",
     "@nextui-org/button": "^2.0.31",
     "@nextui-org/system": "^2.1.2",
+    "@nextui-org/table": "^2.0.33",
     "@nextui-org/theme": "^2.2.3",
     "@prisma/client": "^5.13.0",
+    "@tanstack/react-query": "^5.35.1",
+    "axios": "^1.6.8",
     "framer-motion": "^11.1.7",
     "next": "14.2.3",
     "prisma": "^5.13.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.4",
+    "request": "^2.88.2",
     "zod": "^3.23.6"
   },
   "devDependencies": {
