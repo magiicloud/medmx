@@ -24,7 +24,7 @@ interface DrugData {
 }
 
 const fetchDrugs = async (): Promise<DrugData[]> => {
-  const { data } = await axios.get<DrugData[]>("/api/drugs");
+  const { data } = await axios.get<DrugData[]>("/api/medications");
   return data;
 };
 
