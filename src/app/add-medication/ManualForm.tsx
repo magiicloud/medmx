@@ -95,9 +95,12 @@ const ManualForm = () => {
           selectedKey={watch("drugName")}
           onSelectionChange={(value) => setValue("drugName", value as string)}
         >
-          {DrugData.map((drug) => (
-            <AutocompleteItem key={drug.drugName} textValue={drug.drugName}>
-              {drug.drugName}
+          {DrugData.map((item) => (
+            <AutocompleteItem
+              key={item.drug.drugName}
+              textValue={item.drug.drugName}
+            >
+              {item.drug.drugName}
             </AutocompleteItem>
           ))}
         </Autocomplete>
