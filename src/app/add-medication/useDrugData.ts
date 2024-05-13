@@ -1,17 +1,6 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-
-export interface DrugData {
-  id: number;
-  drugName: string;
-  pilLink: string;
-  drugImagesLink: string;
-  counsellingPointsText: string;
-  counsellingPointsVoiceLink: string;
-  otherResources: string;
-  acute: boolean;
-  chronic: boolean;
-}
+import { DrugData } from "@/types/globalTypes";
 
 const fetchDrugData = async () => {
   const { data } = await axios.get<DrugData[]>("/api/medications");
