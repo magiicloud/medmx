@@ -10,18 +10,8 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
-
-interface DrugData {
-  id: number;
-  drugName: string;
-  pilLink: string;
-  drugImagesLink: string;
-  counsellingPointsText: string;
-  counsellingPointsVoiceLink: string;
-  otherResources: string;
-  acute: boolean;
-  chronic: boolean;
-}
+import Image from "next/image";
+import { DrugData } from "@/types/globalTypes";
 
 const fetchDrugs = async (): Promise<DrugData[]> => {
   const { data } = await axios.get<DrugData[]>("/api/medications");
@@ -31,7 +21,11 @@ const fetchDrugs = async (): Promise<DrugData[]> => {
 const columns = [
   {
     key: "drugName",
-    label: "Drug Name",
+    label: "Medication Name",
+  },
+  {
+    key: "dosingInstruction",
+    label: "Dosing Instruction",
   },
   {
     key: "counsellingPointsText",
@@ -44,10 +38,6 @@ const columns = [
   {
     key: "drugImage",
     label: "Drug Image",
-  },
-  {
-    key: "counsellingPointsVoiceLink",
-    label: "Listen",
   },
   {
     key: "otherResources",
@@ -64,14 +54,17 @@ const MedList = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   const rows = data
-    ? data.map((drug) => ({
-        key: drug.id,
-        drugName: drug.drugName,
-        pil: drug.pilLink,
-        drugImage: drug.drugImagesLink,
-        counsellingPointsText: drug.counsellingPointsText,
-        counsellingPointsVoiceLink: drug.counsellingPointsVoiceLink,
-        otherResources: drug.otherResources,
+    ? data.map((item) => ({
+        key: item.id,
+        drugName: item.drug.drugName,
+        dosingInstruction: item.dosingInstruction,
+        auxInstruction: item.drug.auxInstruction,
+        pil: item.drug.pilLink,
+        drugImage: item.drug.drugImagesLink,
+        counsellingPointsText: item.drug.counsellingPointsText,
+        counsellingPointsVoiceLink: item.drug.counsellingPointsVoiceLink,
+        otherResources: item.drug.otherResources,
+        drugClass: item.drug.drugClasses.map((dc) => dc.drugClass.name),
       }))
     : [];
 
@@ -87,6 +80,16 @@ const MedList = () => {
           <TableRow key={item.key}>
             <TableCell>{item.drugName}</TableCell>
             <TableCell>
+              <p>{item.dosingInstruction}</p>
+              <p>{item.auxInstruction}</p>
+            </TableCell>
+            <TableCell>
+              <audio controls className="pb-3">
+                <source
+                  src={item.counsellingPointsVoiceLink}
+                  type="audio/mpeg"
+                />
+              </audio>
               <p>{item.counsellingPointsText}</p>
             </TableCell>
             <TableCell>
@@ -100,16 +103,12 @@ const MedList = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Image
-              </a>
-            </TableCell>
-            <TableCell>
-              <a
-                href={item.counsellingPointsVoiceLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Listen
+                <Image
+                  src={"https://picsum.photos/seed/picsum/100"}
+                  width={100}
+                  height={100}
+                  alt={item.drugName}
+                />
               </a>
             </TableCell>
             <TableCell>
