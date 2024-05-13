@@ -9,10 +9,11 @@ const drugData = [
     counsellingPointsText:
       "This is for pain or fever. Take with or without food.",
     counsellingPointsVoiceLink:
-      "https://drive.google.com/file/d/1aBt_BfrHHPWV9EKv87CVpncrkffPFYIa/view?usp=sharing",
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/paracet.mp3",
     otherResources: "",
     acute: true,
     chronic: false,
+    auxInstruction: "Take with or without food. Do not exceed 8 in a day.",
   },
   {
     drugName: "ibuprofen 200mg",
@@ -21,10 +22,11 @@ const drugData = [
       "https://www.mediview.sg/keyword/n-zXKQXN/ibuprofen/i-FfDfp99/A",
     counsellingPointsText: "This is for pain or fever. Take after food.",
     counsellingPointsVoiceLink:
-      "https://drive.google.com/file/d/1Kz3Az06UMNGsyEmUcYV-1c9wB6PPMChq/view?usp=drive_link",
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/ibuprofen.mp3",
     otherResources: "",
     acute: true,
     chronic: false,
+    auxInstruction: "Take after food.",
   },
   {
     drugName: "metformin 250mg",
@@ -33,11 +35,12 @@ const drugData = [
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
     counsellingPointsText: "This is for diabetes. Take after food.",
     counsellingPointsVoiceLink:
-      "https://drive.google.com/file/d/1a_X_zXkWDP1oHPwCsgSMsPS7MRBF2SgT/view?usp=drive_link",
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
     otherResources:
       "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
     acute: false,
     chronic: true,
+    auxInstruction: "Take after food.",
   },
 ];
 
@@ -67,6 +70,42 @@ const drugToClassData = [
   {
     drugId: 3,
     drugClassId: 3,
+  },
+];
+
+const drugEntryData = [
+  {
+    drugId: 1,
+    method: "Take",
+    unitDose: "Tab",
+  },
+  {
+    drugId: 2,
+    method: "Take",
+    unitDose: "Tab",
+  },
+  {
+    drugId: 3,
+    method: "Take",
+    unitDose: "Tab",
+  },
+];
+
+const userDrugData = [
+  {
+    userId: 1,
+    drugId: 1,
+    dosingInstruction: "Take 2 tablet(s) 4 times a day when required.",
+  },
+  {
+    userId: 1,
+    drugId: 2,
+    dosingInstruction: "Take 1 tablet(s) 3 times a day when required.",
+  },
+  {
+    userId: 2,
+    drugId: 3,
+    dosingInstruction: "Take 1 tablet(s) 3 times a day.",
   },
 ];
 
@@ -107,6 +146,20 @@ async function main() {
   for (const relation of drugToClassData) {
     await prisma.drugToClass.create({
       data: relation,
+    });
+  }
+
+  // Seed drug entry
+  for (const drugEntry of drugEntryData) {
+    await prisma.drugEntry.create({
+      data: drugEntry,
+    });
+  }
+
+  // Seed user drug entry
+  for (const userDrug of userDrugData) {
+    await prisma.userDrug.create({
+      data: userDrug,
     });
   }
 }

@@ -31,8 +31,10 @@ model Drug {
   otherResources             String?
   acute                      Boolean       @default(false)
   chronic                    Boolean       @default(false)
+  auxInstruction             String
   drugClasses                DrugToClass[] // Relation to junction table
   userdrugs                  UserDrug[]
+  drugEntry                  DrugEntry[]
 }
 
 model DrugClass {
@@ -43,7 +45,7 @@ model DrugClass {
 
 model DrugToClass {
   drug        Drug      @relation(fields: [drugId], references: [id])
-  drugId      Int 
+  drugId      Int
   drugClass   DrugClass @relation(fields: [drugClassId], references: [id])
   drugClassId Int
 
@@ -51,9 +53,18 @@ model DrugToClass {
 }
 
 model UserDrug {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  drug   Drug @relation(fields: [drugId], references: [id], onDelete: Cascade)
-  drugId Int
+  id                Int    @id @default(autoincrement())
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            Int
+  drug              Drug   @relation(fields: [drugId], references: [id], onDelete: Cascade)
+  drugId            Int
+  dosingInstruction String
+}
+
+model DrugEntry {
+  id       Int    @id @default(autoincrement())
+  drug     Drug   @relation(fields: [drugId], references: [id], onDelete: Cascade)
+  drugId   Int
+  method   String
+  unitDose String
 }
