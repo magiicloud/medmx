@@ -2,7 +2,7 @@ import prisma from "./client";
 
 const drugData = [
   {
-    drugName: "paracetamol 500mg",
+    drugName: "PARACETAMOL 500MG",
     pilLink: "https://www.healthhub.sg/a-z/medications/paracetamol-oral",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/paracetamol/i-Nkr8kGL/A",
@@ -16,38 +16,88 @@ const drugData = [
     auxInstruction: "Take with or without food. Do not exceed 8 in a day.",
   },
   {
-    drugName: "ibuprofen 200mg",
+    drugName: "LORATADINE 10MG TAB",
     pilLink: "https://www.healthhub.sg/a-z/medications/ibuprofen",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/ibuprofen/i-FfDfp99/A",
-    counsellingPointsText: "This is for pain or fever. Take after food.",
+    counsellingPointsText: "This is for runny nose.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/ibuprofen.mp3",
     otherResources: "",
     acute: true,
     chronic: false,
-    auxInstruction: "Take after food.",
+    auxInstruction:
+      "May be taken with or without food. May affect alertness.Warning - avoid alcoholic drinks.",
   },
   {
-    drugName: "metformin 250mg",
+    drugName: "DEQUALINIUM 0.25MG LOZENGES",
     pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText: "This is for diabetes. Take after food.",
+    counsellingPointsText: "This is for sore throat.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
     otherResources:
       "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
-    acute: false,
-    chronic: true,
-    auxInstruction: "Take after food.",
+    acute: true,
+    chronic: false,
+    auxInstruction:
+      "May be taken with or without food. To suck and allow to dissolve slowly in the mouth.",
+  },
+  {
+    drugName: "DIFFLAM (BENZYDAMINE 3MG) LOZENGES",
+    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    drugImagesLink:
+      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+    counsellingPointsText: "This is for sore throat.",
+    counsellingPointsVoiceLink:
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
+    otherResources:
+      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
+    acute: true,
+    chronic: false,
+    auxInstruction:
+      "May be taken with or without food. To suck and allow to dissolve slowly in the mouth.",
+  },
+  {
+    drugName: "CHARCOAL 200MG CAP",
+    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    drugImagesLink:
+      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+    counsellingPointsText: "This is for diarrhea.",
+    counsellingPointsVoiceLink:
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
+    otherResources:
+      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
+    acute: true,
+    chronic: false,
+    auxInstruction:
+      "Take half to one hour before food.Take other medicines 2 hours apart. May discolour stools.",
+  },
+  {
+    drugName: "CLAVULANATE 125MG, AMOXICILLIN 500MG TAB",
+    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    drugImagesLink:
+      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+    counsellingPointsText: "This is an antibiotic for infection.",
+    counsellingPointsVoiceLink:
+      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
+    otherResources:
+      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
+    acute: true,
+    chronic: false,
+    auxInstruction:
+      "Take with or after food. Take regularly and complete the course. Consult doctor if rashes develop.",
   },
 ];
 
 const drugClassData = [
   { name: "antipyretic" },
   { name: "analgesic" },
-  { name: "diabetes" },
+  { name: "antihistamine" },
+  { name: "sore throat" },
+  { name: "antidiarrheal" },
+  { name: "antibiotic" },
 ];
 
 const drugToClassData = [
@@ -61,15 +111,23 @@ const drugToClassData = [
   },
   {
     drugId: 2,
-    drugClassId: 1,
-  },
-  {
-    drugId: 2,
-    drugClassId: 2,
+    drugClassId: 3,
   },
   {
     drugId: 3,
-    drugClassId: 3,
+    drugClassId: 4,
+  },
+  {
+    drugId: 4,
+    drugClassId: 4,
+  },
+  {
+    drugId: 5,
+    drugClassId: 5,
+  },
+  {
+    drugId: 6,
+    drugClassId: 6,
   },
 ];
 
@@ -86,6 +144,21 @@ const drugEntryData = [
   },
   {
     drugId: 3,
+    method: "Suck",
+    unitDose: "Loz",
+  },
+  {
+    drugId: 4,
+    method: "Suck",
+    unitDose: "Loz",
+  },
+  {
+    drugId: 5,
+    method: "Take",
+    unitDose: "Cap",
+  },
+  {
+    drugId: 6,
     method: "Take",
     unitDose: "Tab",
   },
@@ -100,7 +173,7 @@ const userDrugData = [
   {
     userId: 1,
     drugId: 2,
-    dosingInstruction: "Take 1 tablet(s) 3 times a day when required.",
+    dosingInstruction: "Take 1 tablet(s) 1 times a day when required.",
   },
   {
     userId: 2,
