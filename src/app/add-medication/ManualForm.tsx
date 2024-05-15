@@ -3,12 +3,12 @@ import React, { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@nextui-org/input";
-import { Select, SelectItem } from "@nextui-org/select";
 import { Spinner } from "@nextui-org/spinner";
 import { Button } from "@nextui-org/button";
 import { useDrugData } from "./useDrugData";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
+import { Select, SelectItem } from "@nextui-org/select";
 
 const formSchema = z.object({
   drugName: z.string().min(1, "Medication name cannot be blank"),
@@ -20,11 +20,12 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const uomData: string[] = ["Half", "One", "Two", "Three"];
+const uomData: string[] = ["HALF", "ONE", "TWO", "THREE"];
 const frequencyData: string[] = [
   "ONCE A DAY",
-  "TWICE A DAY",
-  "THREE TIMES A DAY",
+  "2 TIME(S) A DAY",
+  "3 TIME(S) A DAY",
+  "4 TIME(S) A DAY",
 ];
 
 const ManualForm = () => {
@@ -84,11 +85,11 @@ const ManualForm = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4 md:justify-center"
+        className="flex flex-col space-y-8 md:justify-center"
       >
         <Autocomplete
           label="Select medication"
-          className="max-w-xs"
+          className="w-full md:max-w-sm"
           isInvalid={errors.drugName && true}
           errorMessage={errors.drugName && errors.drugName.message}
           {...register("drugName")}
@@ -96,17 +97,14 @@ const ManualForm = () => {
           onSelectionChange={(value) => setValue("drugName", value as string)}
         >
           {DrugData.map((item) => (
-            <AutocompleteItem
-              key={item.drug.drugName}
-              textValue={item.drug.drugName}
-            >
-              {item.drug.drugName}
+            <AutocompleteItem key={item.drugName} textValue={item.drugName}>
+              {item.drugName}
             </AutocompleteItem>
           ))}
         </Autocomplete>
         <Autocomplete
           label="UOM"
-          className="max-w-xs"
+          className="w-full md:max-w-sm"
           isInvalid={errors.uom && true}
           errorMessage={errors.uom && errors.uom.message}
           {...register("uom")}
@@ -121,7 +119,7 @@ const ManualForm = () => {
         </Autocomplete>
         <Autocomplete
           label="Frequency"
-          className="max-w-xs"
+          className="w-full md:max-w-sm"
           isInvalid={errors.frequency && true}
           errorMessage={errors.frequency && errors.frequency.message}
           selectedKey={frequency}
@@ -148,7 +146,12 @@ const ManualForm = () => {
             isDisabled={true}
           />
         </div>
-        <Button color="primary" type="submit" className="max-w-40" fullWidth>
+        <Button
+          color="primary"
+          type="submit"
+          className="max-w-40 bg-gradient-to-tr from-pink-500 to-yellow-500 self-center md:self-start"
+          fullWidth
+        >
           Submit
         </Button>
       </form>
