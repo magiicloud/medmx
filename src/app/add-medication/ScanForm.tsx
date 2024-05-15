@@ -1,10 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { Input } from "@nextui-org/input";
 import { Input as ShadInput } from "@/components/ui/input";
-import { Select, SelectItem } from "@nextui-org/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@nextui-org/spinner";
 import { Button } from "@nextui-org/button";
 import { useDrugData } from "./useDrugData";
@@ -12,6 +11,24 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@nextui-org/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormLabel,
+  FormDescription,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 
 interface OcrData {
   data: {
@@ -24,60 +41,73 @@ interface OcrData {
   };
 }
 
-interface ScanFormProps {
-  onSubmit: (data: any) => void;
-}
-
-const dummyData: OcrData = {
-  data: {
-    msg: "success",
-    status: "200",
-    data: {
-      drugName: "paracetamol 500mg",
-      dosingInstruction: "take 1 tablet",
-    },
-  },
-};
-
 const formSchema = z.object({
   drugName: z.string().min(1, "Drug name cannot be blank"),
   dosingInstruction: z.string().min(1, "Dosing instruction cannot be blank"),
-  file: z.instanceof(FileList),
+  file: z.any().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-const fetchOcrData = async (file: FileList) => {
+interface SubmittedData {
+  userId: number;
+  drugId: number;
+  dosingInstruction: string;
+}
+
+const fetchOcrData = async (
+  file: File,
+  setProgress: (progress: number) => void
+) => {
   if (!file) {
     return console.error("No file provided");
   }
 
   const formData = new FormData();
-  formData.set("file", file[0]);
+  formData.set("file", file);
 
   try {
-    const response = await axios.post("/api/medications/ocr", formData);
+    const response = await axios.post("/api/medications/ocr", formData, {
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setProgress(percentCompleted);
+        }
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
   }
+};
 
-  // const response = await axios.post<OcrData["data"]>("/api/medications/ocr");
-  // return response.data;
-  // return dummyData.data;
+const fetchDrugId = async (drugName: string): Promise<{ id: number }> => {
+  const encodedDrugName = encodeURIComponent(drugName);
+  try {
+    const response = await axios.get(`/api/medications/ocr/${encodedDrugName}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting Drug ID:", error);
+    throw error;
+  }
+};
+
+const submitFormData = async (submittedData: SubmittedData) => {
+  try {
+    const response = await axios.post("/api/medications/user", submittedData);
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    throw error;
+  }
 };
 
 const ScanForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitSuccessful },
-    setValue,
-    watch,
-    reset,
-    getValues,
-  } = useForm<FormData>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       drugName: "",
@@ -86,32 +116,56 @@ const ScanForm = () => {
     },
   });
 
-  const file = watch("file");
-  const drugName = watch("drugName");
-  const dosingInstruction = watch("dosingInstruction");
+  const file = form.watch("file");
+  const drugName = form.watch("drugName");
+  const dosingInstruction = form.watch("dosingInstruction");
   const [isReadOnly, setIsReadOnly] = useState(true);
-  // const [uploadFile , setUploadFile] = useState(null)
+  const [drugId, setDrugId] = useState("");
+  const [progress, setProgress] = useState(0);
 
   const scanLabel = useMutation({
-    mutationFn: fetchOcrData,
+    mutationFn: (file: File) => fetchOcrData(file, setProgress),
     onSuccess(data) {
       console.log(data);
-      setValue("drugName", data.data.drugName);
-      setValue("dosingInstruction", data.data.dosingInstruction);
+      form.setValue("drugName", data.data.drugName);
+      form.setValue("dosingInstruction", data.data.dosingInstruction);
+      form.setValue("file", undefined);
+      // Fetch drug ID based on the drug name
+      fetchDrugIdMutation.mutate(data.data.drugName);
     },
   });
 
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({ drugName: "", dosingInstruction: "" });
-    }
-  }, [isSubmitSuccessful, reset]);
+  const fetchDrugIdMutation = useMutation({
+    mutationFn: fetchDrugId,
+    onSuccess(data) {
+      setDrugId(data.id.toString());
+    },
+  });
 
-  const onSubmit = (formData: FormData) => {
-    console.log(formData);
+  const submitForm = useMutation({
+    mutationFn: submitFormData,
+    onSuccess() {
+      console.log("Form submitted");
+      form.reset();
+      setDrugId("");
+    },
+  });
+
+  const onSubmit = async (formData: FormData) => {
+    try {
+      await submitForm.mutateAsync({
+        userId: parseInt("1"),
+        drugId: parseInt(drugId),
+        dosingInstruction: formData.dosingInstruction,
+      });
+      console.log("form submitted");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const { data: DrugData, error, isLoading } = useDrugData();
+
   if (!DrugData || isLoading)
     return (
       <div>
@@ -120,84 +174,154 @@ const ScanForm = () => {
     );
   if (error) return <div>Error: {error.message}</div>;
 
-  console.log(file);
-
   return (
     <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-4 md:justify-center"
-      >
-        <div className="flex flex-col space-y-3">
-          <Label htmlFor="fileUpload" className="px-2">
-            Upload Medication Label Image
-          </Label>
-          <div className="flex w-full items-center space-x-2">
-            <ShadInput
-              id="fileUpload"
-              type="file"
-              className="max-w-xs rounded-xl pt-1.5"
-              required
-              {...register("file")}
-            />
-            <Button
-              color="primary"
-              fullWidth={false}
-              className="max-w-40"
-              onClick={() => {
-                setIsReadOnly(true);
-                scanLabel.mutate(file);
-              }}
-              isDisabled={scanLabel.isPending}
-              isLoading={scanLabel.isPending}
-            >
-              {scanLabel.isPending ? "Scanning..." : "Scan Label"}
-            </Button>
-          </div>
-        </div>
-
-        <Select
-          label="Select medication"
-          className="max-w-xs"
-          isInvalid={errors.drugName && true}
-          errorMessage={errors.drugName && errors.drugName.message}
-          {...register("drugName")}
-          isDisabled={isReadOnly}
-          key={drugName}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col space-y-8 md:justify-center"
         >
-          {DrugData.map((item) => (
-            <SelectItem key={item.drug.drugName} value={item.drug.drugName}>
-              {item.drug.drugName}
-            </SelectItem>
-          ))}
-        </Select>
+          <FormField
+            control={form.control}
+            name="file"
+            render={({ field }) => (
+              <FormItem className="flex flex-col space-y-3">
+                <Label>Upload Medication Label Image</Label>
+                <div className="flex w-full items-center space-x-2">
+                  <FormControl>
+                    <ShadInput
+                      type="file"
+                      className="w-full rounded-xl pt-1.5"
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        if (files && files.length > 0) {
+                          field.onChange(files[0]);
+                        }
+                      }}
+                    />
+                  </FormControl>
 
-        <div className="flex w-full items-center space-x-2">
-          <Input
-            type="text"
-            label="Dosing Instruction"
-            className="w-full"
-            {...register("dosingInstruction")}
-            value={dosingInstruction}
-            isInvalid={errors.dosingInstruction && true}
-            errorMessage={
-              errors.dosingInstruction && errors.dosingInstruction.message
-            }
-            isDisabled={isReadOnly}
+                  <Button
+                    color="primary"
+                    fullWidth={false}
+                    className="max-w-40"
+                    onClick={() => {
+                      const uploadedFile =
+                        file instanceof FileList ? file[0] : file;
+                      if (!uploadedFile) {
+                        return console.error("No file provided");
+                      }
+                      setIsReadOnly(true);
+                      scanLabel.mutate(uploadedFile);
+                    }}
+                    isDisabled={scanLabel.isPending}
+                    isLoading={scanLabel.isPending}
+                  >
+                    {scanLabel.isPending
+                      ? progress !== 100
+                        ? "Uploading"
+                        : "Scanning"
+                      : "Scan Label"}
+                  </Button>
+                </div>
+                {scanLabel.isPending && (
+                  <Progress
+                    aria-label="Loading..."
+                    value={progress}
+                    size="sm"
+                    color="primary"
+                  />
+                )}
+              </FormItem>
+            )}
           />
+
+          <FormField
+            control={form.control}
+            name="drugName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Medication Name</FormLabel>
+                <FormControl>
+                  <Select
+                    disabled={isReadOnly}
+                    onValueChange={(value) => {
+                      setDrugId("");
+                      form.setValue("drugName", value as string);
+                      fetchDrugIdMutation.mutate(value as string);
+                    }}
+                    value={drugName}
+                  >
+                    <SelectTrigger className="max-w-xs">
+                      <SelectValue placeholder="Select Medication" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DrugData.map((item) => (
+                        <SelectItem key={item.id} value={item.drugName}>
+                          {item.drugName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                {form.formState.errors.drugName ? (
+                  <FormMessage />
+                ) : (
+                  <FormDescription>
+                    Check if the medication retrieved is correct
+                  </FormDescription>
+                )}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="dosingInstruction"
+            render={({ field }) => (
+              <div className="flex items-center space-x-2">
+                <FormItem className="w-full">
+                  <FormLabel>Dosing Instruction</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Dosing Instruction"
+                      {...field}
+                      value={dosingInstruction}
+                      disabled={isReadOnly}
+                    />
+                  </FormControl>
+                  {form.formState.errors.dosingInstruction ? (
+                    <FormMessage />
+                  ) : (
+                    <FormDescription>
+                      Check if the dosing instruction retrieved is correct
+                    </FormDescription>
+                  )}
+                </FormItem>
+                <Button
+                  color="secondary"
+                  isIconOnly
+                  isDisabled={scanLabel.isPending}
+                  onClick={() => {
+                    setIsReadOnly(!isReadOnly);
+                  }}
+                >
+                  {isReadOnly ? <LockClosedIcon /> : <LockOpen2Icon />}
+                </Button>
+              </div>
+            )}
+          />
+
           <Button
-            color="secondary"
-            onClick={() => {
-              setIsReadOnly(!isReadOnly);
-            }}
+            className="max-w-40 bg-gradient-to-tr from-pink-500 to-yellow-500 self-center md:self-start"
+            type="submit"
+            isDisabled={scanLabel.isPending}
+            fullWidth
           >
-            {isReadOnly ? "Locked" : "Unlocked"}
+            Submit
           </Button>
-        </div>
-        <Button color="primary" type="submit" className="max-w-40" fullWidth>
-          Submit
-        </Button>
-      </form>
+        </form>
+      </Form>
     </>
   );
 };
