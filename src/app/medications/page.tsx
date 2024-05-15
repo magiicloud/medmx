@@ -11,10 +11,12 @@ import {
   TableCell,
 } from "@nextui-org/table";
 import Image from "next/image";
-import { DrugData } from "@/types/globalTypes";
+import { Skeleton } from "@nextui-org/skeleton";
+import { UserDrugData } from "@/types/globalTypes";
+import { BookOpenTextIcon } from "lucide-react";
 
-const fetchDrugs = async (): Promise<DrugData[]> => {
-  const { data } = await axios.get<DrugData[]>("/api/medications");
+const fetchDrugs = async (): Promise<UserDrugData[]> => {
+  const { data } = await axios.get<UserDrugData[]>("/api/medications/user");
   return data;
 };
 
@@ -50,7 +52,29 @@ const MedList = () => {
     queryKey: ["drugs"],
     queryFn: fetchDrugs,
   });
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <Table aria-label="medList-skeleton">
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn key={column.key}>
+              <Skeleton className="h-10 w-1/2 rounded-lg" />
+            </TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {[...Array(5)].map((_, index) => (
+            <TableRow key={index}>
+              {columns.map((column) => (
+                <TableCell key={column.key}>
+                  <Skeleton className="h-8 w-full rounded-lg" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
   if (error) return <div>Error: {error.message}</div>;
 
   const rows = data
@@ -94,7 +118,7 @@ const MedList = () => {
             </TableCell>
             <TableCell>
               <a href={item.pil} target="_blank" rel="noopener noreferrer">
-                PIL
+                <BookOpenTextIcon />
               </a>
             </TableCell>
             <TableCell>
@@ -111,6 +135,7 @@ const MedList = () => {
                 />
               </a>
             </TableCell>
+
             <TableCell>
               <a
                 href={item.otherResources}
