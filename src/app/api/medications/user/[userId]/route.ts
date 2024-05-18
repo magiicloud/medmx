@@ -39,25 +39,3 @@ export const GET = async (
     );
   }
 };
-
-export const POST = async (req: NextRequest) => {
-  try {
-    const { userId, drugId, dosingInstruction } = await req.json();
-
-    const drugToAdd = await prisma.userDrug.create({
-      data: {
-        userId: userId,
-        drugId: parseInt(drugId),
-        dosingInstruction,
-      },
-    });
-
-    return NextResponse.json({ success: true, data: drugToAdd });
-  } catch (error) {
-    console.error("Error adding user drug:", error);
-    return NextResponse.json({
-      success: false,
-      error: (error as Error).message,
-    });
-  }
-};
