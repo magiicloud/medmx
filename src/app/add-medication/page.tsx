@@ -9,7 +9,7 @@ const AddMedication = () => {
 
   return (
     <>
-      <div className="min-h-screen mx-10 max-w-screen-2xl grid md:grid-cols-2 md:gap-x-12">
+      <div className="min-h-screen mx-10 max-w-screen-2xl pt-32 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-3xl font-bold text-center pb-6">
             Add Medication
