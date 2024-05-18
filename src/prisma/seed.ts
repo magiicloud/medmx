@@ -164,42 +164,42 @@ const drugEntryData = [
   },
 ];
 
-const userDrugData = [
-  {
-    userId: 1,
-    drugId: 1,
-    dosingInstruction: "Take 2 tablet(s) 4 times a day when required.",
-  },
-  {
-    userId: 1,
-    drugId: 2,
-    dosingInstruction: "Take 1 tablet(s) 1 times a day when required.",
-  },
-  {
-    userId: 2,
-    drugId: 3,
-    dosingInstruction: "Take 1 tablet(s) 3 times a day.",
-  },
-];
+// const userDrugData = [
+//   {
+//     userId: 1,
+//     drugId: 1,
+//     dosingInstruction: "Take 2 tablet(s) 4 times a day when required.",
+//   },
+//   {
+//     userId: 1,
+//     drugId: 2,
+//     dosingInstruction: "Take 1 tablet(s) 1 times a day when required.",
+//   },
+//   {
+//     userId: 2,
+//     drugId: 3,
+//     dosingInstruction: "Take 1 tablet(s) 3 times a day.",
+//   },
+// ];
 
-const usersData = [
-  {
-    email: "paloma@diamond.com",
-    name: "Paloma Diamond",
-  },
-  {
-    email: "lorelai@lynch.com",
-    name: "Lorelai Lynch",
-  },
-];
+// const usersData = [
+//   {
+//     email: "paloma@diamond.com",
+//     name: "Paloma Diamond",
+//   },
+//   {
+//     email: "lorelai@lynch.com",
+//     name: "Lorelai Lynch",
+//   },
+// ];
 
 async function main() {
   // Seed users
-  for (const user of usersData) {
-    await prisma.user.create({
-      data: user,
-    });
-  }
+  // for (const user of usersData) {
+  //   await prisma.user.create({
+  //     data: user,
+  //   });
+  // }
 
   // Seed drugs
   for (const drug of drugData) {
@@ -230,11 +230,11 @@ async function main() {
   }
 
   // Seed user drug entry
-  for (const userDrug of userDrugData) {
-    await prisma.userDrug.create({
-      data: userDrug,
-    });
-  }
+  // for (const userDrug of userDrugData) {
+  //   await prisma.userDrug.create({
+  //     data: userDrug,
+  //   });
+  // }
 }
 
 main()

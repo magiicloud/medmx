@@ -14,11 +14,15 @@ datasource db {
 }
 
 model User {
-  id              Int        @id @default(autoincrement())
-  email           String     @unique
-  name            String?
-  profile_img_url String?
-  userdrugs       UserDrug[]
+  id            String     @id @default(cuid())
+  name          String?
+  email         String     @unique
+  emailVerified DateTime?
+  image         String?
+  userdrugs     UserDrug[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Drug {
@@ -55,7 +59,7 @@ model DrugToClass {
 model UserDrug {
   id                Int    @id @default(autoincrement())
   user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            Int
+  userId            String
   drug              Drug   @relation(fields: [drugId], references: [id], onDelete: Cascade)
   drugId            Int
   dosingInstruction String
