@@ -29,6 +29,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
+import { useSession } from "next-auth/react";
+import { CustomSession } from "@/auth";
 
 interface OcrData {
   data: {
@@ -50,7 +52,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 interface SubmittedData {
-  userId: number;
+  userId: string;
   drugId: number;
   dosingInstruction: string;
 }
@@ -122,6 +124,8 @@ const ScanForm = () => {
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [drugId, setDrugId] = useState("");
   const [progress, setProgress] = useState(0);
+  const { status, data: session } = useSession();
+  const customSession = session as CustomSession | null;
 
   const scanLabel = useMutation({
     mutationFn: (file: File) => fetchOcrData(file, setProgress),
@@ -154,7 +158,7 @@ const ScanForm = () => {
   const onSubmit = async (formData: FormData) => {
     try {
       await submitForm.mutateAsync({
-        userId: parseInt("1"),
+        userId: customSession!.userId,
         drugId: parseInt(drugId),
         dosingInstruction: formData.dosingInstruction,
       });
@@ -252,7 +256,7 @@ const ScanForm = () => {
                     }}
                     value={drugName}
                   >
-                    <SelectTrigger className="max-w-xs">
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select Medication" />
                     </SelectTrigger>
                     <SelectContent>
