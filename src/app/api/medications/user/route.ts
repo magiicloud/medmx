@@ -1,58 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 
-export const GET = async (
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) => {
-  const { userId } = params;
+const morningKeywords = [
+  "morning",
+  "2 times a day",
+  "3 times a day",
+  "4 times a day",
+];
+const afternoonKeywords = ["afternoon", "3 times a day", "4 times a day"];
+const eveningKeywords = ["evening", "3 times a day", "4 times a day"];
+const nightKeywords = ["night", "4 times a day"];
 
-  if (!userId) {
-    return NextResponse.json({ error: "UserID not found" }, { status: 400 });
-  }
-
-  try {
-    const drugs = await prisma.userDrug.findMany({
-      where: { userId: `${userId}` },
-      include: {
-        drug: {
-          include: {
-            drugClasses: {
-              select: {
-                drugClass: {
-                  select: {
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-    return NextResponse.json(drugs);
-  } catch (error) {
-    console.error("Error fetching drug:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+const checkKeywords = (instruction: string, keywords: string[]) => {
+  const cleanedInstruction = instruction.replace(/[\(\)]/g, ""); // remove parentheses
+  return keywords.some((keyword) =>
+    cleanedInstruction.includes(keyword.toLowerCase())
+  );
 };
 
 export const POST = async (req: NextRequest) => {
-  try {
-    const { userId, drugId, dosingInstruction } = await req.json();
+  const {
+    userId,
+    drugId,
+    dosingInstruction,
+  }: { userId: string; drugId: number; dosingInstruction: string } =
+    await req.json();
 
-    const drugToAdd = await prisma.userDrug.create({
-      data: {
-        userId: userId,
-        drugId: parseInt(drugId),
-        dosingInstruction,
-      },
+  if (!userId || !drugId || !dosingInstruction) {
+    return NextResponse.json({
+      success: false,
+      error: "Missing required fields: userId, drugId, or dosingInstruction",
+    });
+  }
+
+  try {
+    const result = await prisma.$transaction(async (prisma) => {
+      const drugToAdd = await prisma.userDrug.create({
+        data: {
+          userId,
+          drugId,
+          dosingInstruction,
+        },
+      });
+
+      const normalizedInstruction = drugToAdd.dosingInstruction.toLowerCase();
+      const morning = checkKeywords(normalizedInstruction, morningKeywords);
+      const afternoon = checkKeywords(normalizedInstruction, afternoonKeywords);
+      const evening = checkKeywords(normalizedInstruction, eveningKeywords);
+      const night = checkKeywords(normalizedInstruction, nightKeywords);
+
+      const addSchedule = await prisma.schedule.create({
+        data: {
+          userDrugId: drugToAdd.id,
+          morning,
+          afternoon,
+          evening,
+          night,
+        },
+      });
+
+      return { drugToAdd, addSchedule };
     });
 
-    return NextResponse.json({ success: true, data: drugToAdd });
+    return NextResponse.json({
+      success: true,
+      drugToAddData: result.drugToAdd,
+      addScheduleData: result.addSchedule,
+    });
   } catch (error) {
     console.error("Error adding user drug:", error);
     return NextResponse.json({

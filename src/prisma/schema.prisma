@@ -57,12 +57,13 @@ model DrugToClass {
 }
 
 model UserDrug {
-  id                Int    @id @default(autoincrement())
-  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                Int        @id @default(autoincrement())
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
-  drug              Drug   @relation(fields: [drugId], references: [id], onDelete: Cascade)
+  drug              Drug       @relation(fields: [drugId], references: [id], onDelete: Cascade)
   drugId            Int
   dosingInstruction String
+  schedule          Schedule[] // Relation to Schedule
 }
 
 model DrugEntry {
@@ -71,4 +72,15 @@ model DrugEntry {
   drugId   Int
   method   String
   unitDose String
+}
+
+model Schedule {
+  id         Int      @id @default(autoincrement())
+  userDrug   UserDrug @relation(fields: [userDrugId], references: [id], onDelete: Cascade)
+  userDrugId Int
+  morning    Boolean  @default(false)
+  afternoon  Boolean  @default(false)
+  evening    Boolean  @default(false)
+  night      Boolean  @default(false)
+  daysOfWeek String[] @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
 }
