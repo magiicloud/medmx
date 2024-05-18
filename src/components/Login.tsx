@@ -4,13 +4,17 @@ import { Button } from "@nextui-org/button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { CustomSession } from "@/auth";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 const Login = () => {
   const { status, data: session } = useSession();
-  const customSession = session as CustomSession | null;
+  const customSession = session as CustomSession;
   return (
     <>
-      <div className="text-center space-x-10 mt-10">
+      <div className="text-center space-x-10 space-y-8 mt-10">
+        {status === "authenticated" && (
+          <TextGenerateEffect words={`Hello, ${customSession.user!.name}.`} />
+        )}
         {status === "authenticated" && (
           <Button color="primary" size="lg">
             <Link href="/api/auth/signout">Sign Out</Link>
