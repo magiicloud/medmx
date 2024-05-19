@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
   Table,
@@ -13,9 +13,26 @@ import {
 import Image from "next/image";
 import { Skeleton } from "@nextui-org/skeleton";
 import { UserDrugData } from "@/types/globalTypes";
-import { BookOpenTextIcon } from "lucide-react";
+import {
+  ArrowDownToLineIcon,
+  BookOpenTextIcon,
+  EllipsisVerticalIcon,
+  LibraryIcon,
+  PillIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import { CustomSession } from "@/auth";
+import Link from "next/link";
+import { Button } from "@nextui-org/button";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@nextui-org/dropdown";
+import useCustomToast from "@/components/useCustomToast";
 
 const columns = [
   {
@@ -24,29 +41,31 @@ const columns = [
   },
   {
     key: "dosingInstruction",
-    label: "Dosing Instruction",
+    label: "Dose Instruction",
+  },
+  {
+    key: "auxInstruction",
+    label: "Special Instruction",
   },
   {
     key: "counsellingPointsText",
     label: "Counselling Points",
   },
   {
-    key: "pil",
-    label: "Information Leaflet",
-  },
-  {
     key: "drugImage",
     label: "Drug Image",
   },
   {
-    key: "otherResources",
-    label: "Other Resources",
+    key: "action",
+    label: "Action",
   },
 ];
 
 const MedListTable = () => {
   const { data: session } = useSession();
   const customSession = session as CustomSession | null;
+  const queryClient = useQueryClient();
+  const { displayToast } = useCustomToast();
 
   const fetchDrugs = async (): Promise<UserDrugData[]> => {
     const { data } = await axios.get<UserDrugData[]>(
@@ -55,9 +74,20 @@ const MedListTable = () => {
     return data;
   };
 
+  const deleteUserDrug = async (userDrugId: number) => {
+    await axios.delete(`/api/medications/userDrug/${userDrugId}`);
+  };
+
   const { data, error, isLoading } = useQuery({
     queryKey: ["drugs"],
     queryFn: fetchDrugs,
+  });
+
+  const deleteDrug = useMutation({
+    mutationFn: deleteUserDrug,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["drugs"] });
+    },
   });
 
   if (isLoading)
@@ -107,12 +137,14 @@ const MedListTable = () => {
           <TableColumn key={column.key}>{column.label}</TableColumn>
         ))}
       </TableHeader>
-      <TableBody>
+      <TableBody emptyContent={"No medications to display."}>
         {rows.map((item) => (
           <TableRow key={item.key}>
             <TableCell>{item.drugName}</TableCell>
             <TableCell>
               <p>{item.dosingInstruction}</p>
+            </TableCell>
+            <TableCell>
               <p>{item.auxInstruction}</p>
             </TableCell>
             <TableCell>
@@ -125,12 +157,7 @@ const MedListTable = () => {
               <p>{item.counsellingPointsText}</p>
             </TableCell>
             <TableCell>
-              <a href={item.pil} target="_blank" rel="noopener noreferrer">
-                <BookOpenTextIcon />
-              </a>
-            </TableCell>
-            <TableCell>
-              <a
+              <Link
                 href={item.drugImage}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -141,17 +168,88 @@ const MedListTable = () => {
                   height={100}
                   alt={item.drugName}
                 />
-              </a>
+              </Link>
             </TableCell>
-
             <TableCell>
-              <a
-                href={item.otherResources}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Other Resources
-              </a>
+              <div className="relative flex justify-end items-center gap-2">
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button isIconOnly size="sm" variant="light">
+                      <EllipsisVerticalIcon className="text-default-300" />
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Link Actions"
+                    disabledKeys={["disabledOtherResources", "test"]}
+                  >
+                    <DropdownSection title="Additional Information" showDivider>
+                      <DropdownItem
+                        key="image"
+                        href={item.drugImage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startContent={<PillIcon />}
+                      >
+                        Medication Image
+                      </DropdownItem>
+                      <DropdownItem
+                        key="pil"
+                        href={item.pil}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startContent={<BookOpenTextIcon />}
+                      >
+                        Medication Leaflet
+                      </DropdownItem>
+                      {/* {item.otherResources ? (
+                        <DropdownItem
+                          key="otherResources"
+                          href={item.otherResources}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startContent={<LibraryIcon />}
+                        >
+                          Other Resources
+                        </DropdownItem>
+                      ) : (
+                        <DropdownItem key="disabledOtherResources"></DropdownItem>
+                      )} */}
+                    </DropdownSection>
+                    <DropdownSection title="Actions">
+                      <DropdownItem
+                        key="download"
+                        startContent={<ArrowDownToLineIcon />}
+                        onClick={() => {
+                          console.log("download");
+                          displayToast(
+                            "default",
+                            undefined,
+                            "Downloading medication list..."
+                          );
+                        }}
+                      >
+                        Download Medication List
+                      </DropdownItem>
+                      <DropdownItem
+                        key="delete"
+                        className="text-danger"
+                        color="danger"
+                        startContent={<Trash2Icon />}
+                        onClick={() => {
+                          deleteDrug.mutate(item.key);
+                          displayToast(
+                            "destructive",
+                            undefined,
+                            "Medication deleted successfully"
+                          );
+                        }}
+                      >
+                        Delete Medication
+                      </DropdownItem>
+                    </DropdownSection>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
             </TableCell>
           </TableRow>
         ))}
