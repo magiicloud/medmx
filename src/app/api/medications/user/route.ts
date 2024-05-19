@@ -3,12 +3,20 @@ import prisma from "@/prisma/client";
 
 const morningKeywords = [
   "morning",
+  "1 times a day",
+  "1 time a day",
+  "once a day",
   "2 times a day",
   "3 times a day",
   "4 times a day",
 ];
 const afternoonKeywords = ["afternoon", "3 times a day", "4 times a day"];
-const eveningKeywords = ["evening", "3 times a day", "4 times a day"];
+const eveningKeywords = [
+  "evening",
+  "2 times a day",
+  "3 times a day",
+  "4 times a day",
+];
 const nightKeywords = ["night", "4 times a day"];
 
 const checkKeywords = (instruction: string, keywords: string[]) => {

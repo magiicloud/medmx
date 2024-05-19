@@ -23,3 +23,21 @@ export interface DrugClassData {
     name: string;
   };
 }
+
+export interface ScheduleData {
+  id: number;
+  userDrugId: number;
+  morning: boolean;
+  afternoon: boolean;
+  evening: boolean;
+  night: boolean;
+  daysOfWeek: string[];
+  userDrug: {
+    dosingInstruction: string;
+    drug: {
+      drugName: string;
+      drugClasses: DrugClassData[];
+      auxInstruction: string;
+    };
+  };
+}
