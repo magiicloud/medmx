@@ -6,18 +6,16 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { ScheduleData } from "@/types/globalTypes";
 import { useSession } from "next-auth/react";
-import { CustomSession } from "@/auth";
 import { SunriseIcon, SunIcon, SunsetIcon, Moon } from "lucide-react";
 
 const ScheduleCard = () => {
   const timeOfDay: string[] = ["morning", "afternoon", "evening", "night"];
 
   const { data: session } = useSession();
-  const customSession = session as CustomSession | null;
 
   const fetchUserSchedule = async () => {
     const { data } = await axios.get<ScheduleData[]>(
-      `/api/schedule/${customSession!.userId}`
+      `/api/schedule/${session!.user!.id}`
     );
     return data;
   };

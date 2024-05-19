@@ -1,10 +1,6 @@
-import NextAuth, { Session } from "next-auth";
+import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import prisma from "./prisma/client";
-
-export interface CustomSession extends Session {
-  userId: string;
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
@@ -18,14 +14,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           update: { email: user.email ?? "" }, // Ensure user.email is not null
           create: { email: user.email ?? "" }, // Ensure user.email is not null
         });
-        token.userId = dbUser.id;
+        token.userId = dbUser.id; // Save the user id (cuid) from the DB in the token
       }
       return token;
     },
     async session(params) {
       const { session, token } = params;
-      session.userId = token.userId as string;
-      return session as CustomSession;
+      session.user.id = token.userId as string;
+      return session;
     },
   },
   session: {

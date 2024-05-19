@@ -22,7 +22,6 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { CustomSession } from "@/auth";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
 import {
@@ -63,13 +62,12 @@ const columns = [
 
 const MedListTable = () => {
   const { data: session } = useSession();
-  const customSession = session as CustomSession | null;
   const queryClient = useQueryClient();
   const { displayToast } = useCustomToast();
 
   const fetchDrugs = async (): Promise<UserDrugData[]> => {
     const { data } = await axios.get<UserDrugData[]>(
-      `/api/medications/user/${customSession!.userId}`
+      `/api/medications/user/${session!.user!.id}`
     );
     return data;
   };
@@ -131,7 +129,7 @@ const MedListTable = () => {
     : [];
 
   return (
-    <Table aria-label="medList" className="opacity-90">
+    <Table aria-label="medList" className="opacity-90 w-screen p-6">
       <TableHeader>
         {columns.map((column) => (
           <TableColumn key={column.key}>{column.label}</TableColumn>

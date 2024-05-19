@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/form";
 import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
-import { CustomSession } from "@/auth";
 
 interface OcrData {
   data: {
@@ -124,8 +123,7 @@ const ScanForm = () => {
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [drugId, setDrugId] = useState("");
   const [progress, setProgress] = useState(0);
-  const { status, data: session } = useSession();
-  const customSession = session as CustomSession | null;
+  const { data: session } = useSession();
 
   const scanLabel = useMutation({
     mutationFn: (file: File) => fetchOcrData(file, setProgress),
@@ -158,7 +156,7 @@ const ScanForm = () => {
   const onSubmit = async (formData: FormData) => {
     try {
       await submitForm.mutateAsync({
-        userId: customSession!.userId,
+        userId: session!.user!.id as string,
         drugId: parseInt(drugId),
         dosingInstruction: formData.dosingInstruction,
       });
