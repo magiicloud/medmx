@@ -26,19 +26,15 @@ const checkKeywords = (instruction: string, keywords: string[]) => {
   );
 };
 
-export const POST = async (req: NextRequest) => {
-  const {
-    userId,
-    drugId,
-    dosingInstruction,
-  }: { userId: string; drugId: number; dosingInstruction: string } =
-    await req.json();
-
+export const addUserDrugWithSchedule = async (
+  userId: string,
+  drugId: number,
+  dosingInstruction: string
+) => {
   if (!userId || !drugId || !dosingInstruction) {
-    return NextResponse.json({
-      success: false,
-      error: "Missing required fields: userId, drugId, or dosingInstruction",
-    });
+    throw new Error(
+      "Missing required fields: userId, drugId, or dosingInstruction"
+    );
   }
 
   try {
@@ -69,17 +65,51 @@ export const POST = async (req: NextRequest) => {
 
       return { drugToAdd, addSchedule };
     });
+    return result;
+  } catch (error) {
+    console.error("Error adding user drug:", error);
+    throw new Error("Internal server error");
+  }
+};
 
+export const POST = async (req: NextRequest) => {
+  const {
+    userId,
+    drugId,
+    dosingInstruction,
+  }: { userId: string; drugId: number; dosingInstruction: string } =
+    await req.json();
+
+  if (!userId || !drugId || !dosingInstruction) {
+    return NextResponse.json(
+      {
+        error: "Missing required fields: userId, drugId, or dosingInstruction",
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const result = await addUserDrugWithSchedule(
+      userId,
+      drugId,
+      dosingInstruction
+    );
     return NextResponse.json({
       success: true,
       drugToAddData: result.drugToAdd,
       addScheduleData: result.addSchedule,
     });
   } catch (error) {
-    console.error("Error adding user drug:", error);
-    return NextResponse.json({
-      success: false,
-      error: (error as Error).message,
-    });
+    return NextResponse.json(
+      { error: (error as Error).message },
+      {
+        status:
+          (error as Error).message ===
+          "Missing required fields: userId, drugId, or dosingInstruction"
+            ? 400
+            : 500,
+      }
+    );
   }
 };

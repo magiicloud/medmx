@@ -1,27 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DocumentProcessorServiceClient } from "@google-cloud/documentai";
-import fs from "fs/promises";
 
-export const POST = async (req: NextRequest) => {
-  // const file = process.env.SAMPLE_IMG_URL;
-  const formData = await req.formData();
-  const file = formData.get("file") as File;
-  console.log(file);
-
+export const extractMedLabel = async (file: File) => {
   if (!file) {
-    return NextResponse.json({
-      status: 400,
-      error: "Please select a file to be uploaded.",
-    });
+    throw new Error("Please select a file to be uploaded.");
   }
 
   try {
-    // const buffer = await fs.readFile(file);
-    const buffer = Buffer.from(await file.arrayBuffer());
-
     // Convert the file to an ArrayBuffer then to a Buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
     const encodedImage = buffer.toString("base64");
-    console.log("Hello encoded Image");
 
     // Configure the Google Cloud Document AI client
     const client = new DocumentProcessorServiceClient();
@@ -36,7 +24,6 @@ export const POST = async (req: NextRequest) => {
         mimeType: "image/jpeg",
       },
     };
-    console.log("Send req to Document AI");
 
     // Process the document with Google Cloud Document AI
     const [result] = await client.processDocument(request);
@@ -61,17 +48,41 @@ export const POST = async (req: NextRequest) => {
         }
       }
     }
+
+    return extractedMedLabel;
+  } catch (error) {
+    console.error("Error extracting label:", error);
+    throw new Error("Internal server error");
+  }
+};
+
+export const POST = async (req: NextRequest) => {
+  const formData = await req.formData();
+  const file = formData.get("file") as File;
+  if (!file) {
+    return NextResponse.json({
+      status: 400,
+      error: "Please select a file to be uploaded.",
+    });
+  }
+
+  try {
+    const extractedMedLabel = await extractMedLabel(file);
     return NextResponse.json({
       status: 200,
-      msg: "The document has been processed.",
+      msg: "The label has been extracted.",
       data: extractedMedLabel,
     });
   } catch (error) {
-    console.error("Failed to process document:", error);
-    return NextResponse.json({
-      status: 500,
-      error: "Failed to process document",
-      details: error as Error,
-    });
+    console.error("Failed to extract label:", error);
+    return NextResponse.json(
+      { error: (error as Error).message },
+      {
+        status:
+          (error as Error).message === "Please select a file to be uploaded."
+            ? 400
+            : 500,
+      }
+    );
   }
 };

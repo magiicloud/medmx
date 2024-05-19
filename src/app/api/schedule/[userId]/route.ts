@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/client";
 
-export const GET = async (
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) => {
-  const { userId } = params;
-
+export const getUserDrugsAndSchedules = async (userId: string) => {
   if (!userId) {
-    return NextResponse.json({ error: "UserID not found" }, { status: 400 });
+    throw new Error("UserID not found");
   }
 
   try {
@@ -55,13 +50,30 @@ export const GET = async (
         },
       },
     });
-
-    return NextResponse.json(schedules);
+    return schedules;
   } catch (error) {
     console.error("Error querying schedules:", error);
-    return NextResponse.json({
-      success: false,
-      error: (error as Error).message,
-    });
+    throw new Error("Internal server error");
+  }
+};
+
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) => {
+  const { userId } = params;
+
+  if (!userId) {
+    return NextResponse.json({ error: "UserID not found" }, { status: 400 });
+  }
+
+  try {
+    const schedules = await getUserDrugsAndSchedules(userId);
+    return NextResponse.json(schedules);
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: (error as Error).message === "UserID not found" ? 400 : 500 }
+    );
   }
 };
