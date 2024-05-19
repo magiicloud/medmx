@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { WavyBackground } from "@/components/ui/wavy-background";
 import { CenterNavBar } from "@/components/CenterNavBar";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +22,10 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <Providers>
-          <WavyBackground>
+          <WavyBackground className="h-screen">
             <CenterNavBar />
             {children}
+            <Toaster />
           </WavyBackground>
         </Providers>
       </body>
