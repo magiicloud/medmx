@@ -1,5 +1,6 @@
 import React from "react";
-import MedListTable from "./MedListTable";
+// import MedListTable from "./MedListTable";
+import { MedListTable } from "./TableColumnRow";
 
 const MedList = () => {
   return (
