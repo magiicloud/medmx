@@ -1,36 +1,25 @@
-"use client";
 import React from "react";
 import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/card";
 import DrugCard from "./DrugCard";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
 import { ScheduleData } from "@/types/globalTypes";
-import { useSession } from "next-auth/react";
 import { SunriseIcon, SunIcon, SunsetIcon, Moon } from "lucide-react";
+import { auth } from "@/auth";
+import { getUserDrugsAndSchedules } from "../api/schedule/[userId]/route";
+import { redirect } from "next/navigation";
 
-const ScheduleCard = () => {
+const ScheduleCard = async () => {
+  const session = await auth();
+  if (!session || !session.user) {
+    redirect("/");
+  }
+  const scheduleData = await getUserDrugsAndSchedules(
+    session.user.id as string
+  );
+  if (!scheduleData) {
+    return null;
+  }
+
   const timeOfDay: string[] = ["morning", "afternoon", "evening", "night"];
-
-  const { data: session } = useSession();
-
-  const fetchUserSchedule = async () => {
-    const { data } = await axios.get<ScheduleData[]>(
-      `/api/schedule/${session!.user!.id}`
-    );
-    return data;
-  };
-
-  const {
-    data: scheduleData,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ["schedule"],
-    queryFn: fetchUserSchedule,
-  });
-
-  if (!scheduleData || isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="grid lg:grid-cols-4 gap-4 mt-32">
