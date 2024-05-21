@@ -1,7 +1,14 @@
 import { getUserDrugsByUserId } from "@/app/api/medications/user/[userId]/route";
 import { auth } from "@/auth";
-import TableTest from "./TableComponent";
+import TableComponent from "./TableComponent";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
+import { Spinner } from "@nextui-org/spinner";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
 export const columns = [
   {
@@ -58,6 +65,26 @@ export const getRows = async () => {
 };
 
 export const MedListTable = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["tableData"],
+    queryFn: getRows,
+  });
+
   const rows = await getRows();
-  return <TableTest columns={columns} rows={rows} />;
+  if (!rows) return [];
+
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-full mt-24">
+          <Spinner />
+        </div>
+      }
+    >
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <TableComponent columns={columns} rows={rows} />
+      </HydrationBoundary>
+    </Suspense>
+  );
 };

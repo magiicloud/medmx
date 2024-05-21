@@ -13,7 +13,6 @@ import {
   ArrowDownToLineIcon,
   BookOpenTextIcon,
   EllipsisVerticalIcon,
-  LibraryIcon,
   PillIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -26,7 +25,7 @@ import {
   DropdownSection,
   DropdownItem,
 } from "@nextui-org/dropdown";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import useCustomToast from "@/components/useCustomToast";
 
@@ -51,7 +50,7 @@ const TableComponent = ({
     key: string;
     label: string;
   }[];
-  rows: RowData[] | null;
+  rows: RowData[] | [];
 }) => {
   const deleteUserDrug = async (userDrugId: number) => {
     await axios.delete(`/api/medications/userDrug/${userDrugId}`);
