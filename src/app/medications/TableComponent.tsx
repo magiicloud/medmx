@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableHeader,
@@ -28,6 +28,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import useCustomToast from "@/components/useCustomToast";
+import { convertTextToSpeech } from "../api/medications/textSpeech/route";
 
 interface RowData {
   key: number;
@@ -64,6 +65,27 @@ const TableComponent = ({
   });
   const queryClient = useQueryClient();
   const { displayToast } = useCustomToast();
+  const [audioUrl, setAudioUrl] = useState("");
+
+  const textToSpeech = useMutation({
+    mutationFn: async ({
+      speechString,
+      fileNameString,
+    }: {
+      speechString: string;
+      fileNameString: string;
+    }) => {
+      const response = await axios.post("/api/medications/textSpeech", {
+        speechString,
+        fileNameString,
+      });
+      return response.data.url;
+    },
+    onSuccess: (url) => {
+      setAudioUrl(url);
+      queryClient.invalidateQueries({ queryKey: ["tts"] });
+    },
+  });
 
   return (
     <Table aria-label="medList" className="opacity-90 w-screen p-6">
@@ -83,12 +105,21 @@ const TableComponent = ({
               <p>{item.auxInstruction}</p>
             </TableCell>
             <TableCell>
-              <audio controls className="pb-3">
-                <source
-                  src={item.counsellingPointsVoiceLink}
-                  type="audio/mpeg"
-                />
-              </audio>
+              <Button
+                onClick={() => {
+                  textToSpeech.mutateAsync({
+                    speechString: item.counsellingPointsText,
+                    fileNameString: item.drugName,
+                  });
+                }}
+              >
+                Listen Counselling
+              </Button>
+              {audioUrl && (
+                <audio controls className="pb-3">
+                  <source src={audioUrl} type="audio/mpeg" />
+                </audio>
+              )}
               <p>{item.counsellingPointsText}</p>
             </TableCell>
             <TableCell>
