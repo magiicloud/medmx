@@ -1,12 +1,18 @@
-"use client";
-import React, { useState } from "react";
-import { Tabs, Tab } from "@nextui-org/tabs";
-import ManualForm from "./ManualForm";
-import ScanForm from "./ScanForm";
+import React from "react";
+import AddMedsTab from "./AddMedsTab";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { getAllDrugs } from "../api/medications/route";
 
-const AddMedication = () => {
-  const [tab, setTab] = useState("scan");
-
+const AddMedication = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["medications"],
+    queryFn: getAllDrugs,
+  });
   return (
     <>
       <div className="min-h-screen mx-10 max-w-screen-2xl pt-32 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
@@ -19,22 +25,9 @@ const AddMedication = () => {
             name and dosing instructions
           </p>
         </div>
-        <div className="flex flex-col space-y-4 md:justify-center">
-          <Tabs
-            fullWidth
-            size="md"
-            aria-label="Tabs form"
-            selectedKey={tab}
-            onSelectionChange={(key) => setTab(key.toString())}
-          >
-            <Tab key="scan" title="Scan">
-              <ScanForm />
-            </Tab>
-            <Tab key="manual" title="Manual">
-              <ManualForm />
-            </Tab>
-          </Tabs>
-        </div>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <AddMedsTab />
+        </HydrationBoundary>
       </div>
     </>
   );

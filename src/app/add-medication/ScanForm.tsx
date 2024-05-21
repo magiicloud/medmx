@@ -4,7 +4,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Input as ShadInput } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Spinner } from "@nextui-org/spinner";
 import { Button } from "@nextui-org/button";
 import { useDrugData } from "./useDrugData";
 import { useMutation } from "@tanstack/react-query";
@@ -30,6 +29,7 @@ import {
 } from "@/components/ui/form";
 import { LockClosedIcon, LockOpen2Icon } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
+import { Skeleton } from "@nextui-org/skeleton";
 
 interface OcrData {
   data: {
@@ -167,13 +167,6 @@ const ScanForm = () => {
   };
 
   const { data: DrugData, error, isLoading } = useDrugData();
-
-  if (!DrugData || isLoading)
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
   if (error) return <div>Error: {error.message}</div>;
 
   return (
@@ -238,44 +231,51 @@ const ScanForm = () => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="drugName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Medication Name</FormLabel>
-                <FormControl>
-                  <Select
-                    disabled={isReadOnly}
-                    onValueChange={(value) => {
-                      setDrugId("");
-                      form.setValue("drugName", value as string);
-                      fetchDrugIdMutation.mutate(value as string);
-                    }}
-                    value={drugName}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Medication" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DrugData.map((item) => (
-                        <SelectItem key={item.id} value={item.drugName}>
-                          {item.drugName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                {form.formState.errors.drugName ? (
-                  <FormMessage />
-                ) : (
-                  <FormDescription>
-                    Check if the medication retrieved is correct
-                  </FormDescription>
-                )}
-              </FormItem>
-            )}
-          />
+          {!DrugData || isLoading ? (
+            <div className="flex flex-col gap-y-2">
+              <Skeleton className="h-4 w-2/5 rounded-lg opacity-70" />
+              <Skeleton className="rounded-lg w-full opacity-70 h-10" />
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name="drugName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Medication Name</FormLabel>
+                  <FormControl>
+                    <Select
+                      disabled={isReadOnly}
+                      onValueChange={(value) => {
+                        setDrugId("");
+                        form.setValue("drugName", value as string);
+                        fetchDrugIdMutation.mutate(value as string);
+                      }}
+                      value={drugName}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Medication" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DrugData.map((item) => (
+                          <SelectItem key={item.id} value={item.drugName}>
+                            {item.drugName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {form.formState.errors.drugName ? (
+                    <FormMessage />
+                  ) : (
+                    <FormDescription>
+                      Check if the medication retrieved is correct
+                    </FormDescription>
+                  )}
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
