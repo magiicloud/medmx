@@ -7,7 +7,7 @@ const drugData = [
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/paracetamol/i-Nkr8kGL/A",
     counsellingPointsText:
-      "This is for pain or fever. Take with or without food.",
+      "This medication helps to relieve pain or fever. Do not take more than 8 tablets in a day. Do not take with other panadol/paracetamol containing products such as Anarex, Panadol Cough/Cold/Flu. Do not consume alcohol while on paracetamol.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/paracet.mp3",
     otherResources: "",
@@ -20,7 +20,7 @@ const drugData = [
     pilLink: "https://www.healthhub.sg/a-z/medications/ibuprofen",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/ibuprofen/i-FfDfp99/A",
-    counsellingPointsText: "This is for runny nose.",
+    counsellingPointsText: "This medication is for runny nose.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/ibuprofen.mp3",
     otherResources: "",
@@ -34,7 +34,8 @@ const drugData = [
     pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText: "This is for sore throat.",
+    counsellingPointsText:
+      "This medication is for your sore throat to suck like a sweet when necessary.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
     otherResources:
@@ -49,7 +50,8 @@ const drugData = [
     pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText: "This is for sore throat.",
+    counsellingPointsText:
+      "This medication is for your sore throat to suck like a sweet when necessary. The lozenge can cause numbness of tongue and throat. Avoid hot beverages at least 30mins after taking lozenge as the numbness can cause you to burn your tongue/throat.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
     otherResources:
@@ -64,7 +66,8 @@ const drugData = [
     pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText: "This is for diarrhea.",
+    counsellingPointsText:
+      "This medication is for your diarrhea. Take half to one hour before food. Take other medicines 2 hours apart. This medication may discolour stools.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
     otherResources:
@@ -72,18 +75,18 @@ const drugData = [
     acute: true,
     chronic: false,
     auxInstruction:
-      "Take half to one hour before food.Take other medicines 2 hours apart. May discolour stools.",
+      "Take half to one hour before food. Take other medicines 2 hours apart. May discolour stools.",
   },
   {
     drugName: "CLAVULANATE 125MG, AMOXICILLIN 500MG TAB",
     pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
     drugImagesLink:
       "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText: "This is an antibiotic for infection.",
+    counsellingPointsText:
+      "This is an antibiotic for infection. Some side effects include nausea, vomiting, diarrhea that should be alleviated by taking after food. Take regularly and complete the course. Consult doctor if rashes develop.",
     counsellingPointsVoiceLink:
       "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
-    otherResources:
-      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
+    otherResources: "",
     acute: true,
     chronic: false,
     auxInstruction:
