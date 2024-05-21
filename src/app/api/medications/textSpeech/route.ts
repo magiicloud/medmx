@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Creates clients
 const ttsClient = new textToSpeech.TextToSpeechClient();
-const storage = new Storage();
 
 interface TTSData {
   speechString: string;
@@ -18,44 +17,50 @@ interface TTSData {
 export const convertTextToSpeech = async (ttsData: TTSData) => {
   const request = {
     input: { text: ttsData.speechString },
-    voice: { languageCode: "en-US", ssmlGender: "NEUTRAL" },
+    voice: {
+      languageCode: "en-US",
+      name: "en-US-Journey-F",
+    },
     audioConfig: { audioEncoding: "MP3" },
   };
 
-  const bucketName = process.env.GOOGLE_CLOUD_BUCKET_NAME;
-  const fileName = `${ttsData.fileNameString}.mp3`;
+  // const fileName = `${ttsData.fileNameString}.mp3`;
   // Temporary file path for storing the audio file
-  const tempFilePath = path.join(os.tmpdir(), fileName);
+  // const tempFilePath = path.join(os.tmpdir(), fileName);
 
   try {
     // Ignore typescript error for response and request
     // @ts-ignore
     const [response] = await ttsClient.synthesizeSpeech(request);
+    const audioContent = response.audioContent.toString("base64");
 
     // Write the binary audio content to a temporary local file
-    await fs.writeFile(tempFilePath, response.audioContent, "binary");
+    // await fs.writeFile(tempFilePath, response.audioContent, "binary");
+    return audioContent;
 
     // Upload the temporary file to your bucket
-    await storage.bucket(bucketName!).upload(tempFilePath, {
-      destination: fileName,
-    });
+    // await storage.bucket(bucketName!).upload(tempFilePath, {
+    //   destination: fileName,
+    //   public: true, // Make the file public
+    // });
 
     // Generate a signed URL for the file
-    const [url] = await storage
-      .bucket(bucketName!)
-      .file(fileName)
-      .getSignedUrl({
-        action: "read",
-        expires: Date.now() + 1000 * 60 * 60, // 1 hour expiration
-      });
+    // const [url] = await storage
+    //   .bucket(bucketName!)
+    //   .file(fileName)
+    //   .getSignedUrl({
+    //     action: "read",
+    //     expires: Date.now() + 1000 * 60 * 60, // 1 hour expiration
+    //   });
+    // const url = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
-    return url;
+    // return url;
   } catch (error) {
     console.error("Error during text-to-speech conversion:", error);
     throw error;
-  } finally {
-    // Clean up the temporary file
-    await fs.unlink(tempFilePath);
+    // } finally {
+    //   // Clean up the temporary file
+    //   await fs.unlink(tempFilePath);
   }
 };
 
@@ -71,9 +76,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const tts = await convertTextToSpeech(ttsData);
     return NextResponse.json({
-      status: 200,
-      msg: "The label has been extracted.",
-      data: tts,
+      tts,
     });
   } catch (error) {
     console.error("Error during text-to-speech conversion:", error);
