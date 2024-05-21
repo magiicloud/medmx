@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import {
   ArrowDownToLineIcon,
+  AudioLinesIcon,
   BookOpenTextIcon,
   EllipsisVerticalIcon,
   PillIcon,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
+import { Tooltip } from "@nextui-org/tooltip";
 import {
   Dropdown,
   DropdownTrigger,
@@ -28,7 +30,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import useCustomToast from "@/components/useCustomToast";
-import { convertTextToSpeech } from "../api/medications/textSpeech/route";
+import { Spinner } from "@nextui-org/spinner";
+import { generateExcel } from "./generateExcel";
 
 interface RowData {
   key: number;
@@ -65,7 +68,8 @@ const TableComponent = ({
   });
   const queryClient = useQueryClient();
   const { displayToast } = useCustomToast();
-  const [audioUrl, setAudioUrl] = useState("");
+  const [playingRow, setPlayingRow] = useState<number | null>(null);
+  const [audioUrls, setAudioUrls] = useState<{ [key: number]: string }>({});
 
   const textToSpeech = useMutation({
     mutationFn: async ({
@@ -74,18 +78,39 @@ const TableComponent = ({
     }: {
       speechString: string;
       fileNameString: string;
+      rowKey: number;
     }) => {
       const response = await axios.post("/api/medications/textSpeech", {
         speechString,
         fileNameString,
       });
-      return response.data.url;
+      return response.data.tts;
     },
-    onSuccess: (url) => {
-      setAudioUrl(url);
+    onSuccess: (audioContent, { rowKey }) => {
+      const audioUrl = `data:audio/mp3;base64,${audioContent}`;
+      setAudioUrls((prev) => ({
+        ...prev,
+        [rowKey]: audioUrl,
+      }));
       queryClient.invalidateQueries({ queryKey: ["tts"] });
     },
   });
+
+  const handlePlayAudio = (item: RowData) => {
+    setPlayingRow(item.key);
+
+    if (audioUrls[item.key]) {
+      // Use cached audio URL if available
+      setPlayingRow(item.key);
+    } else {
+      // Fetch audio from API and cache it
+      textToSpeech.mutate({
+        speechString: item.counsellingPointsText,
+        fileNameString: item.drugName,
+        rowKey: item.key,
+      });
+    }
+  };
 
   return (
     <Table aria-label="medList" className="opacity-90 w-screen p-6">
@@ -105,22 +130,38 @@ const TableComponent = ({
               <p>{item.auxInstruction}</p>
             </TableCell>
             <TableCell>
-              <Button
-                onClick={() => {
-                  textToSpeech.mutateAsync({
-                    speechString: item.counsellingPointsText,
-                    fileNameString: item.drugName,
-                  });
-                }}
-              >
-                Listen Counselling
-              </Button>
-              {audioUrl && (
-                <audio controls className="pb-3">
-                  <source src={audioUrl} type="audio/mpeg" />
-                </audio>
-              )}
-              <p>{item.counsellingPointsText}</p>
+              <div className="flex items-center space-x-3">
+                <Tooltip
+                  size="sm"
+                  color="secondary"
+                  placement="bottom"
+                  showArrow={true}
+                  content="Click to listen to counselling points"
+                >
+                  <Button
+                    isIconOnly
+                    variant="light"
+                    onClick={() => handlePlayAudio(item)}
+                  >
+                    {textToSpeech.isPending && playingRow === item.key ? (
+                      <Spinner />
+                    ) : (
+                      <AudioLinesIcon />
+                    )}
+                  </Button>
+                </Tooltip>
+                {playingRow === item.key && audioUrls[item.key] && (
+                  <audio
+                    controls
+                    controlsList="nodownload"
+                    className="max-w-96 pr-3 h-8"
+                    autoPlay
+                  >
+                    <source src={audioUrls[item.key]} type="audio/mp3" />
+                  </audio>
+                )}
+              </div>
+              <p className="pt-3 mb-3">{item.counsellingPointsText}</p>
             </TableCell>
             <TableCell>
               <Link
@@ -186,7 +227,7 @@ const TableComponent = ({
                         key="download"
                         startContent={<ArrowDownToLineIcon />}
                         onClick={() => {
-                          console.log("download");
+                          generateExcel(rows);
                           displayToast(
                             "default",
                             undefined,
