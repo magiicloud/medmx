@@ -32,6 +32,7 @@ import axios from "axios";
 import useCustomToast from "@/components/useCustomToast";
 import { Spinner } from "@nextui-org/spinner";
 import { generateExcel } from "./generateExcel";
+import { motion } from "framer-motion";
 
 interface RowData {
   key: number;
@@ -113,102 +114,119 @@ const TableComponent = ({
   };
 
   return (
-    <Table aria-label="medList" className="opacity-90 w-screen p-6">
-      <TableHeader>
-        {columns.map((column) => (
-          <TableColumn key={column.key}>{column.label}</TableColumn>
-        ))}
-      </TableHeader>
-      <TableBody emptyContent={"No medications to display."}>
-        {rows!.map((item) => (
-          <TableRow key={item.key}>
-            <TableCell>{item.drugName}</TableCell>
-            <TableCell>
-              <p>{item.dosingInstruction}</p>
-            </TableCell>
-            <TableCell>
-              <p>{item.auxInstruction}</p>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center space-x-3">
-                <Tooltip
-                  size="sm"
-                  color="secondary"
-                  placement="bottom"
-                  showArrow={true}
-                  content="Click to listen to counselling points"
-                >
-                  <Button
-                    isIconOnly
-                    variant="light"
-                    onClick={() => handlePlayAudio(item)}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 2 }}
+    >
+      <Table aria-label="medList" className="opacity-90 w-screen p-6">
+        <TableHeader>
+          {columns.map((column) => (
+            <TableColumn key={column.key}>{column.label}</TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody emptyContent={"No medications to display."}>
+          {rows!.map((item) => (
+            <TableRow key={item.key}>
+              <TableCell>{item.drugName}</TableCell>
+              <TableCell>
+                <p>{item.dosingInstruction}</p>
+              </TableCell>
+              <TableCell>
+                <p>{item.auxInstruction}</p>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center space-x-3">
+                  <Tooltip
+                    size="sm"
+                    color="secondary"
+                    placement="bottom"
+                    showArrow={true}
+                    content="Click to listen to counselling points"
                   >
-                    {textToSpeech.isPending && playingRow === item.key ? (
-                      <Spinner />
-                    ) : (
-                      <AudioLinesIcon />
-                    )}
-                  </Button>
-                </Tooltip>
-                {playingRow === item.key && audioUrls[item.key] && (
-                  <audio
-                    controls
-                    controlsList="nodownload"
-                    className="max-w-96 pr-3 h-8"
-                    autoPlay
-                  >
-                    <source src={audioUrls[item.key]} type="audio/mp3" />
-                  </audio>
-                )}
-              </div>
-              <p className="pt-3 mb-3">{item.counsellingPointsText}</p>
-            </TableCell>
-            <TableCell>
-              <Link
-                href={item.drugImage}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src={"https://picsum.photos/seed/picsum/100"}
-                  width={100}
-                  height={100}
-                  alt={item.drugName}
-                />
-              </Link>
-            </TableCell>
-            <TableCell>
-              <div className="relative flex justify-end items-center gap-2">
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button isIconOnly size="sm" variant="light">
-                      <EllipsisVerticalIcon className="text-default-300" />
+                    <Button
+                      isIconOnly
+                      variant="light"
+                      onClick={() => handlePlayAudio(item)}
+                    >
+                      {textToSpeech.isPending && playingRow === item.key ? (
+                        <Spinner />
+                      ) : (
+                        <AudioLinesIcon />
+                      )}
                     </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    aria-label="Link Actions"
-                    disabledKeys={["disabledOtherResources", "test"]}
-                  >
-                    <DropdownSection title="Additional Information" showDivider>
-                      <DropdownItem
-                        key="image"
-                        href={item.drugImage}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startContent={<PillIcon />}
+                  </Tooltip>
+
+                  {playingRow === item.key && audioUrls[item.key] && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1 }}
+                    >
+                      <audio
+                        controls
+                        controlsList="nodownload"
+                        className="max-w-96 pr-3 h-8"
+                        autoPlay
                       >
-                        Medication Image
-                      </DropdownItem>
-                      <DropdownItem
-                        key="pil"
-                        href={item.pil}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startContent={<BookOpenTextIcon />}
+                        <source src={audioUrls[item.key]} type="audio/mp3" />
+                      </audio>
+                    </motion.div>
+                  )}
+                </div>
+                <p className="pt-3 mb-3">{item.counsellingPointsText}</p>
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={item.drugImage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Image
+                    src={"https://picsum.photos/seed/picsum/100"}
+                    width={100}
+                    height={100}
+                    alt={item.drugName}
+                  />
+                </Link>
+              </TableCell>
+              <TableCell>
+                <div className="relative flex justify-end items-center gap-2">
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button isIconOnly size="sm" variant="light">
+                        <EllipsisVerticalIcon className="text-default-300" />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu
+                      aria-label="Link Actions"
+                      disabledKeys={["disabledOtherResources", "test"]}
+                    >
+                      <DropdownSection
+                        title="Additional Information"
+                        showDivider
                       >
-                        Medication Leaflet
-                      </DropdownItem>
-                      {/* {item.otherResources ? (
+                        <DropdownItem
+                          key="image"
+                          href={item.drugImage}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startContent={<PillIcon />}
+                        >
+                          Medication Image
+                        </DropdownItem>
+                        <DropdownItem
+                          key="pil"
+                          href={item.pil}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startContent={<BookOpenTextIcon />}
+                        >
+                          Medication Leaflet
+                        </DropdownItem>
+                        {/* {item.otherResources ? (
                         <DropdownItem
                           key="otherResources"
                           href={item.otherResources}
@@ -221,47 +239,48 @@ const TableComponent = ({
                       ) : (
                         <DropdownItem key="disabledOtherResources"></DropdownItem>
                       )} */}
-                    </DropdownSection>
-                    <DropdownSection title="Actions">
-                      <DropdownItem
-                        key="download"
-                        startContent={<ArrowDownToLineIcon />}
-                        onClick={() => {
-                          generateExcel(rows);
-                          displayToast(
-                            "default",
-                            undefined,
-                            "Downloading medication list..."
-                          );
-                        }}
-                      >
-                        Download Medication List
-                      </DropdownItem>
-                      <DropdownItem
-                        key="delete"
-                        className="text-danger"
-                        color="danger"
-                        startContent={<Trash2Icon />}
-                        onClick={() => {
-                          deleteDrug.mutate(item.key);
-                          displayToast(
-                            "destructive",
-                            undefined,
-                            "Medication deleted successfully"
-                          );
-                        }}
-                      >
-                        Delete Medication
-                      </DropdownItem>
-                    </DropdownSection>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                      </DropdownSection>
+                      <DropdownSection title="Actions">
+                        <DropdownItem
+                          key="download"
+                          startContent={<ArrowDownToLineIcon />}
+                          onClick={() => {
+                            generateExcel(rows);
+                            displayToast(
+                              "default",
+                              undefined,
+                              "Downloading medication list..."
+                            );
+                          }}
+                        >
+                          Download Medication List
+                        </DropdownItem>
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          color="danger"
+                          startContent={<Trash2Icon />}
+                          onClick={() => {
+                            deleteDrug.mutate(item.key);
+                            displayToast(
+                              "destructive",
+                              undefined,
+                              "Medication deleted successfully"
+                            );
+                          }}
+                        >
+                          Delete Medication
+                        </DropdownItem>
+                      </DropdownSection>
+                    </DropdownMenu>
+                  </Dropdown>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </motion.div>
   );
 };
 

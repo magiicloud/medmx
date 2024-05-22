@@ -1,4 +1,3 @@
-import React from "react";
 import AddMedsTab from "./AddMedsTab";
 import {
   dehydrate,
