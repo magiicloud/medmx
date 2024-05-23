@@ -1,14 +1,38 @@
 "use client";
-import React, { useEffect } from "react";
-import { z } from "zod";
+import React, { useEffect, useState } from "react";
+import { set, z } from "zod";
 import { useForm } from "react-hook-form";
-import { Input } from "@nextui-org/input";
-import { Spinner } from "@nextui-org/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@nextui-org/button";
 import { useDrugData } from "./useDrugData";
+import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
-import { Select, SelectItem } from "@nextui-org/select";
+import { motion } from "framer-motion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormLabel,
+  FormDescription,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Skeleton } from "@nextui-org/skeleton";
+import useCustomToast from "@/components/useCustomToast";
+import {
+  fetchDrugEntry,
+  fetchDrugId,
+  fetchOcrData,
+  submitFormData,
+} from "./utils";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   drugName: z.string().min(1, "Medication name cannot be blank"),
@@ -29,15 +53,7 @@ const frequencyData: string[] = [
 ];
 
 const ManualForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitSuccessful },
-    setValue,
-    getValues,
-    watch,
-    reset,
-  } = useForm<FormData>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       drugName: "",
@@ -47,114 +63,232 @@ const ManualForm = () => {
     },
   });
 
-  // const drugName = watch("drugName");
-  const uom = watch("uom");
-  const frequency = watch("frequency");
-
-  useEffect(() => {
-    if (uom && frequency) {
-      const dosingInstruction = `TAKE ${uom} TAB ${frequency}`;
-      setValue("dosingInstruction", dosingInstruction);
-    }
-  }, [uom, frequency, setValue]);
-
+  const drugName = form.watch("drugName");
+  const uom = form.watch("uom");
+  const frequency = form.watch("frequency");
+  const dosingInstruction = form.watch("dosingInstruction");
+  const [drugId, setDrugId] = useState("");
+  const [method, setMethod] = useState("");
+  const [unitDose, setUnitDose] = useState("");
   const { data: DrugData, error, isLoading } = useDrugData();
-  if (!DrugData || isLoading)
-    return (
-      <div>
-        <Spinner />
-      </div>
-    );
-  if (error) return <div>Error: {error.message}</div>;
+  const { data: session } = useSession();
+
+  const fetchDrugIdMutation = useMutation({
+    mutationFn: fetchDrugId,
+    onSuccess(data) {
+      setDrugId(data.id.toString());
+      fetchDrugEntryMutation.mutate(data.id.toString());
+    },
+  });
+
+  const fetchDrugEntryMutation = useMutation({
+    mutationFn: fetchDrugEntry,
+    onSuccess(data) {
+      console.log(data);
+      setMethod(data.method);
+      setUnitDose(data.unitDose);
+    },
+  });
+
+  const submitForm = useMutation({
+    mutationFn: submitFormData,
+    onSuccess() {
+      console.log("Form submitted");
+      form.reset();
+      setDrugId("");
+      setMethod("");
+      setUnitDose("");
+    },
+  });
+
+  const onSubmit = async (formData: FormData) => {
+    try {
+      await submitForm.mutateAsync({
+        userId: session!.user!.id as string,
+        drugId: parseInt(drugId),
+        dosingInstruction: formData.dosingInstruction,
+      });
+      console.log("form submitted");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
   useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-  }, [isSubmitSuccessful, reset]);
+    const getFullDosingInstruction = () => {
+      const instruction = `${method} ${form.getValues(
+        "uom"
+      )} ${unitDose} ${form.getValues("frequency")}`;
+      form.setValue("dosingInstruction", instruction);
+    };
 
-  const onSubmit = (formData: FormData) => {
-    console.log(formData);
-  };
-
-  const getFullDosingInstruction = () => {
-    return `TAKE ${getValues("uom")} TAB ${getValues("frequency")}`;
-  };
+    getFullDosingInstruction();
+  }, [method, unitDose, uom, frequency]);
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col space-y-8 md:justify-center"
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
       >
-        <Autocomplete
-          label="Select medication"
-          className="w-full md:max-w-sm"
-          isInvalid={errors.drugName && true}
-          errorMessage={errors.drugName && errors.drugName.message}
-          {...register("drugName")}
-          selectedKey={watch("drugName")}
-          onSelectionChange={(value) => setValue("drugName", value as string)}
-        >
-          {DrugData.map((item) => (
-            <AutocompleteItem key={item.drugName} textValue={item.drugName}>
-              {item.drugName}
-            </AutocompleteItem>
-          ))}
-        </Autocomplete>
-        <Autocomplete
-          label="UOM"
-          className="w-full md:max-w-sm"
-          isInvalid={errors.uom && true}
-          errorMessage={errors.uom && errors.uom.message}
-          {...register("uom")}
-          selectedKey={uom}
-          onSelectionChange={(value) => setValue("uom", value as string)}
-        >
-          {uomData.map((uom) => (
-            <AutocompleteItem key={uom} textValue={uom}>
-              {uom}
-            </AutocompleteItem>
-          ))}
-        </Autocomplete>
-        <Autocomplete
-          label="Frequency"
-          className="w-full md:max-w-sm"
-          isInvalid={errors.frequency && true}
-          errorMessage={errors.frequency && errors.frequency.message}
-          selectedKey={frequency}
-          onSelectionChange={(value) => setValue("frequency", value as string)}
-          {...register("frequency")}
-        >
-          {frequencyData.map((frequency) => (
-            <AutocompleteItem key={frequency} textValue={frequency}>
-              {frequency}
-            </AutocompleteItem>
-          ))}
-        </Autocomplete>
-        <div className="flex w-full items-center space-x-2">
-          <Input
-            type="text"
-            label="Dosing Instruction"
-            className="w-full"
-            {...register("dosingInstruction")}
-            value={getFullDosingInstruction()}
-            isInvalid={errors.dosingInstruction && true}
-            errorMessage={
-              errors.dosingInstruction && errors.dosingInstruction.message
-            }
-            isDisabled={true}
-          />
-        </div>
-        <Button
-          color="primary"
-          type="submit"
-          className="max-w-40 bg-gradient-to-tr from-pink-500 to-yellow-500 self-center md:self-start"
-          fullWidth
-        >
-          Submit
-        </Button>
-      </form>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col space-y-8 md:justify-center"
+          >
+            {!DrugData || isLoading ? (
+              <div className="flex flex-col gap-y-2">
+                <Skeleton className="h-4 w-2/5 rounded-lg opacity-70" />
+                <Skeleton className="rounded-lg w-full opacity-70 h-10" />
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="drugName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Medication Name</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          setDrugId("");
+                          form.setValue("drugName", value as string);
+                          fetchDrugIdMutation.mutate(value as string);
+                        }}
+                        value={drugName}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Medication" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DrugData.map((item) => (
+                            <SelectItem key={item.id} value={item.drugName}>
+                              {item.drugName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    {form.formState.errors.drugName ? (
+                      <FormMessage />
+                    ) : (
+                      <FormDescription>
+                        Select the medication to be added
+                      </FormDescription>
+                    )}
+                  </FormItem>
+                )}
+              />
+            )}
+
+            <FormField
+              control={form.control}
+              name="uom"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dose</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        form.setValue("uom", value as string);
+                        // getFullDosingInstruction();
+                      }}
+                      value={uom}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Dose" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {uomData.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {form.formState.errors.uom ? <FormMessage /> : null}
+                  <FormDescription>
+                    Number of tablets/capsules to be taken
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="frequency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frequency</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        form.setValue("frequency", value as string);
+                        // getFullDosingInstruction();
+                      }}
+                      value={frequency}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Frequency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {frequencyData.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {form.formState.errors.frequency ? <FormMessage /> : null}
+                  <FormDescription>
+                    Number of times the dose should be taken in a day
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dosingInstruction"
+              render={({ field }) => (
+                <div className="flex items-center space-x-2">
+                  <FormItem className="w-full">
+                    <FormLabel>Dosing Instruction</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Dosing Instruction"
+                        {...field}
+                        value={dosingInstruction}
+                        disabled
+                      />
+                    </FormControl>
+                    {form.formState.errors.dosingInstruction ? (
+                      <FormMessage />
+                    ) : (
+                      <FormDescription>
+                        Check the dosing instruction against your medication
+                        label
+                      </FormDescription>
+                    )}
+                  </FormItem>
+                </div>
+              )}
+            />
+
+            <Button
+              className="max-w-40 bg-gradient-to-tr from-pink-500 to-yellow-500 self-center md:self-start"
+              type="submit"
+              fullWidth
+            >
+              Submit
+            </Button>
+          </form>
+        </Form>
+      </motion.div>
     </>
   );
 };
