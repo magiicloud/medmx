@@ -4,7 +4,7 @@ import DrugCard from "./DrugCard";
 import { ScheduleData } from "@/types/globalTypes";
 import { SunriseIcon, SunIcon, SunsetIcon, Moon } from "lucide-react";
 import { auth } from "@/auth";
-import { getUserDrugsAndSchedules } from "../actions/getUserDrugsAndSchedules";
+import { getUserDrugsAndSchedules } from "../../actions/getUserDrugsAndSchedules";
 import { redirect } from "next/navigation";
 
 const ScheduleCard = async () => {
