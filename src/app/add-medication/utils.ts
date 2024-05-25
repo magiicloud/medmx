@@ -13,16 +13,20 @@ export const fetchOcrData = async (
   formData.set("file", file);
 
   try {
-    const response = await axios.post("/api/medications/ocr", formData, {
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setProgress(percentCompleted);
-        }
-      },
-    });
+    const response = await axios.post(
+      "/api/medications/ocr/queue/batch",
+      formData,
+      {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgress(percentCompleted);
+          }
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -43,6 +47,17 @@ export const fetchDrugId = async (
   }
 };
 
+export const fetchDrugEntry = async (drugId: string) => {
+  const encodedDrugId = encodeURIComponent(drugId);
+  try {
+    const response = await axios.get(`/api/medications/entry/${encodedDrugId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting Drug ID:", error);
+    throw error;
+  }
+};
+
 export const submitFormData = async (submittedData: SubmittedData) => {
   try {
     const response = await axios.post("/api/medications/user", submittedData);
@@ -51,4 +66,11 @@ export const submitFormData = async (submittedData: SubmittedData) => {
     console.error("Error submitting form:", error);
     throw error;
   }
+};
+
+export const deleteJob = async (userId: string, jobPk: number) => {
+  const response = await axios.delete(
+    `/api/medications/ocr/jobs/${userId}/${jobPk}`
+  );
+  return response.data;
 };
