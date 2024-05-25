@@ -1,10 +1,10 @@
-import AddMedsTab from "./AddMedsTab";
+import { getAllDrugs } from "../actions/getAllDrugs";
+import AddMedsTab from "./components/AddMedsTab";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { getAllDrugs } from "../api/medications/route";
 
 const AddMedication = async () => {
   const queryClient = new QueryClient();
