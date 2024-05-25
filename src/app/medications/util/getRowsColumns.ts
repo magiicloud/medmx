@@ -1,14 +1,12 @@
-import { getUserDrugsByUserId } from "@/app/api/medications/user/[userId]/route";
+// "use client";
 import { auth } from "@/auth";
-import TableComponent from "./TableComponent";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { Spinner } from "@nextui-org/spinner";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import axios from "axios";
+import { UserDrugData } from "@/types/globalTypes";
+import { useSession } from "next-auth/react";
+import { RowData } from "../components/TableComponent";
+import { useQuery } from "@tanstack/react-query";
+import { getUserDrugsByUserId } from "@/app/actions/getUserDrugsByUserId";
+import { revalidatePath } from "next/cache";
 
 export const columns = [
   {
@@ -37,10 +35,10 @@ export const columns = [
   },
 ];
 
-export const getRows = async () => {
+export const getRows = async (): Promise<RowData[] | null> => {
   const session = await auth();
   if (!session || !session.user) {
-    redirect("/");
+    return null;
   }
 
   const userDrugs = await getUserDrugsByUserId(session.user.id as string);
@@ -60,31 +58,21 @@ export const getRows = async () => {
     otherResources: item.drug.otherResources,
     drugClass: item.drug.drugClasses.map((dc) => dc.drugClass.name),
   }));
-
+  revalidatePath("/medications");
   return rowData;
 };
 
-export const MedListTable = async () => {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["tableData"],
-    queryFn: getRows,
-  });
+// export const getRows = async (userId: string): Promise<UserDrugData[]> => {
+//   console.log(`Fetching user drugs for user ID: ${userId}`);
+//   const response = await axios.get(`/api/medications/user/${userId}`);
+//   return response.data;
+// };
 
-  const rows = await getRows();
-  if (!rows) return [];
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center h-full mt-24">
-          <Spinner />
-        </div>
-      }
-    >
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TableComponent columns={columns} rows={rows} />
-      </HydrationBoundary>
-    </Suspense>
-  );
-};
+// export const useRowData = () => {
+//   const { data: session } = useSession();
+//   return useQuery({
+//     queryKey: ["tableData", session?.user?.id],
+//     queryFn: () => getRows(session!.user!.id as string),
+//     enabled: !!session?.user?.id, // Ensure the query only runs when the user ID is available
+//   });
+// };

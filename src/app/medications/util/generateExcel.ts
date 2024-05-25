@@ -1,4 +1,3 @@
-import { UserDrugData } from "@/types/globalTypes";
 import ExcelJS from "exceljs";
 
 export const generateExcel = async (tableData: any[]) => {
