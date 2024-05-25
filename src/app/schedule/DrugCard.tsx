@@ -10,7 +10,7 @@ interface Props {
 const DrugCard: React.FC<Props> = ({ userSchedule }) => {
   return (
     <div>
-      <Card className="max-w-lg opacity-100">
+      <Card className="max-w-lg opacity-100" isBlurred>
         <CardHeader className="justify-between">
           {userSchedule.userDrug.drug.drugName}
         </CardHeader>
@@ -18,28 +18,24 @@ const DrugCard: React.FC<Props> = ({ userSchedule }) => {
           <p>{userSchedule.userDrug.dosingInstruction}</p>
         </CardBody>
         <CardFooter className="gap-3">
-          <div className="flex gap-1">
-            <p className="text-default-400 text-small">
-              {userSchedule.userDrug.drug.auxInstruction}
-            </p>
-          </div>
-          <div className="flex gap-1">
-            <div className="space-y-1 text-end text-default-400 text-small">
-              {userSchedule.userDrug.drug.drugClasses.map((drug, index) => {
-                return (
-                  <Chip
-                    key={index}
-                    variant="shadow"
-                    classNames={{
-                      base: "bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30",
-                      content: "drop-shadow shadow-black text-white",
-                    }}
-                  >
-                    {drug.drugClass.name}
-                  </Chip>
-                );
-              })}
-            </div>
+          <p className="text-default-400 text-small">
+            {userSchedule.userDrug.drug.auxInstruction}
+          </p>
+          <div className="space-y-1 text-end text-default-400 text-small">
+            {userSchedule.userDrug.drug.drugClasses.map((drug, index) => {
+              return (
+                <Chip
+                  key={index}
+                  variant="shadow"
+                  classNames={{
+                    base: "bg-gradient-to-br from-indigo-500 to-pink-500 border-small border-white/50 shadow-pink-500/30",
+                    content: "drop-shadow shadow-black text-white",
+                  }}
+                >
+                  {drug.drugClass.name}
+                </Chip>
+              );
+            })}
           </div>
         </CardFooter>
       </Card>
