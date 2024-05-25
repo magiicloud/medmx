@@ -6,7 +6,7 @@ const useCustomToast = () => {
   const displayToast = (
     variant?: "default" | "destructive" | null | undefined,
     title?: string | undefined,
-    description?: string | undefined
+    description?: React.ReactNode | undefined
   ) => {
     toast({
       variant: variant,
