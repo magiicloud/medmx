@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String     @unique
+  email         String      @unique
   emailVerified DateTime?
   image         String?
   userdrugs     UserDrug[]
+  jobResults    JobResult[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -83,4 +84,14 @@ model Schedule {
   evening    Boolean  @default(false)
   night      Boolean  @default(false)
   daysOfWeek String[] @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+}
+
+model JobResult {
+  id                Int      @id @default(autoincrement())
+  userId            String
+  jobId             String
+  drugName          String
+  dosingInstruction String
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
