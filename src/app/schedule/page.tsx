@@ -1,10 +1,13 @@
 import React from "react";
 import ScheduleCard from "./ScheduleCard";
+import { MotionDiv } from "@/components/MotionDiv";
 
 const Schedule = () => {
   return (
     <div>
-      <ScheduleCard />
+      <MotionDiv>
+        <ScheduleCard />
+      </MotionDiv>
     </div>
   );
 };
