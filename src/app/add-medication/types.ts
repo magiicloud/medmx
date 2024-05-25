@@ -20,3 +20,10 @@ export interface SubmittedData {
   drugId: number;
   dosingInstruction: string;
 }
+
+export interface UserJobsData {
+  id: number;
+  jobId: string;
+  drugName: string;
+  dosingInstruction: string;
+}
