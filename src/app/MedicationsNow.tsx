@@ -53,11 +53,17 @@ const MedicationsNow = async () => {
               />
             </CardHeader>
             <CardBody className="px-3 py-0 text-small text-default-400 space-y-8 pb-8">
-              {scheduleData.map((item) => {
-                if (item[currentTimeOfDay as keyof ScheduleData]) {
-                  return <DrugCard key={item.id} userSchedule={item} />;
-                }
-              })}
+              {scheduleData.length === 0 ? (
+                <div className="text-center text-lg">
+                  You have no medications scheduled for this time of day.
+                </div>
+              ) : (
+                scheduleData.map((item) => {
+                  if (item[currentTimeOfDay as keyof ScheduleData]) {
+                    return <DrugCard key={item.id} userSchedule={item} />;
+                  }
+                })
+              )}
             </CardBody>
           </Card>
         </div>
