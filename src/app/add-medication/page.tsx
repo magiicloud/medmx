@@ -14,8 +14,8 @@ const AddMedication = async () => {
   });
   return (
     <>
-      <div className="min-h-screen mx-10 max-w-screen-2xl pt-32 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
-        <div className="flex flex-col justify-center items-center">
+      <div className="mx-10 pt-32 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
+        <div className="flex flex-col justify-center items-center mb-10 md:mb-0">
           <h1 className="text-3xl font-bold text-center pb-6">
             Add Medication
           </h1>
