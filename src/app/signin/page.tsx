@@ -14,6 +14,7 @@ export default async function SignInPage() {
           <CardBody className="space-y-4">
             {Object.values(providerMap).map((provider) => (
               <form
+                key={provider.id}
                 action={async () => {
                   "use server";
                   await signIn(provider.id, { redirectTo: "/" });

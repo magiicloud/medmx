@@ -123,6 +123,7 @@ const ManualForm = () => {
     };
 
     getFullDosingInstruction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [method, unitDose, uom, frequency]);
 
   return (
