@@ -20,10 +20,10 @@ export default auth(async (req: NextRequest) => {
 
 export const config = {
   matcher: [
-    "/medications/:path*",
-    "/add-medication/:path*",
-    "/schedule/:path*",
-    "/api/medications/:path*", // API routes
-    "/api/schedule/:path*",
+    // "/medications/:path*",
+    // "/add-medication/:path*",
+    // "/schedule/:path*",
+    // "/api/medications/:path*", // API routes
+    // "/api/schedule/:path*",
   ],
 };

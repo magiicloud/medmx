@@ -12,7 +12,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|avatar|button|card|chip|dropdown|input|modal|pagination|progress|select|skeleton|spinner|table|tabs|popover|ripple|listbox|divider|scroll-shadow|menu|checkbox|spacer).js"
+    "./node_modules/@nextui-org/theme/dist/components/(autocomplete|avatar|button|card|chip|divider|dropdown|input|modal|pagination|progress|select|skeleton|spinner|table|tabs|popover|ripple|listbox|scroll-shadow|menu|checkbox|spacer).js",
   ],
   prefix: "",
   theme: {

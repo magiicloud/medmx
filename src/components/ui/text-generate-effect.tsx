@@ -23,6 +23,7 @@ export const TextGenerateEffect = ({
         delay: stagger(0.2),
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scope.current]);
 
   const renderWords = () => {
@@ -45,7 +46,7 @@ export const TextGenerateEffect = ({
   return (
     <div className={cn("font-bold", className)}>
       <div className="mt-4">
-        <div className=" dark:text-white text-black text-2xl leading-snug tracking-wide">
+        <div className=" dark:text-white text-black leading-relaxed tracking-wide">
           {renderWords()}
         </div>
       </div>
