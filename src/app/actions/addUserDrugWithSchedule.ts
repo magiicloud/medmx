@@ -67,6 +67,8 @@ export const addUserDrugWithSchedule = async (
       return { drugToAdd, addSchedule };
     });
     revalidatePath("/schedule");
+    revalidatePath("/medications");
+    revalidatePath("/");
     return result;
   } catch (error) {
     console.error("Error adding user drug:", error);

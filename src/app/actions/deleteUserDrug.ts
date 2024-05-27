@@ -13,6 +13,7 @@ export const deleteUserDrug = async (userDrugId: string) => {
     });
     revalidatePath("/medications");
     revalidatePath("/schedule");
+    revalidatePath("/");
     return deletedDrug;
   } catch (error) {
     console.error("Error deleting drug:", error);
