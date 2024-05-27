@@ -10,14 +10,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("SUPABASE_URL")
+  directUrl = env("DIRECT_URL") // For Supabase remove if using local postgres
 }
 
 model User {
   id            String      @id @default(cuid())
   name          String?
   email         String      @unique
-  emailVerified DateTime?
   image         String?
   userdrugs     UserDrug[]
   jobResults    JobResult[]
@@ -32,10 +32,6 @@ model Drug {
   pilLink                    String
   drugImagesLink             String
   counsellingPointsText      String
-  counsellingPointsVoiceLink String
-  otherResources             String?
-  acute                      Boolean       @default(false)
-  chronic                    Boolean       @default(false)
   auxInstruction             String
   drugClasses                DrugToClass[] // Relation to junction table
   userdrugs                  UserDrug[]
@@ -83,7 +79,6 @@ model Schedule {
   afternoon  Boolean  @default(false)
   evening    Boolean  @default(false)
   night      Boolean  @default(false)
-  daysOfWeek String[] @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
 }
 
 model JobResult {
