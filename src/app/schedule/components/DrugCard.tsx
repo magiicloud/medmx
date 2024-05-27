@@ -21,7 +21,7 @@ const DrugCard: React.FC<Props> = ({ userSchedule }) => {
           <p className="text-default-400 text-small">
             {userSchedule.userDrug.drug.auxInstruction}
           </p>
-          <div className="space-y-1 text-end text-default-400 text-small">
+          <div className="space-y-1 space-x-1 text-end text-default-400 text-small">
             {userSchedule.userDrug.drug.drugClasses.map((drug, index) => {
               return (
                 <Chip

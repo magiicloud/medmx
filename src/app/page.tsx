@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <>
       {session ? (
-        <main className="min-h-screen mx-10 max-w-screen-2xl pt-32 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
+        <main className="min-h-screen mx-10 max-w-screen-2xl pt-20 md:pt-0 grid md:grid-cols-2 md:gap-x-12">
           <div className="flex flex-col justify-center items-center p-3">
             <h1 className="text-4xl md:text-5xl lg:text-7xl text-white font-bold inter-var text-center">
               MedMx
