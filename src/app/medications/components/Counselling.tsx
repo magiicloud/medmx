@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import { Spinner } from "@nextui-org/spinner";
@@ -13,6 +13,7 @@ const Counselling = ({ item }: any) => {
   const [playingRow, setPlayingRow] = useState<number | null>(null);
   const [audioUrls, setAudioUrls] = useState<{ [key: number]: string }>({});
   const queryClient = useQueryClient();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const textToSpeech = useMutation({
     mutationFn: async ({
@@ -36,6 +37,11 @@ const Counselling = ({ item }: any) => {
         [rowKey]: audioUrl,
       }));
       queryClient.invalidateQueries({ queryKey: ["tts"] });
+      // Automatically play the audio when it becomes available
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl;
+        audioRef.current.play();
+      }
     },
   });
 
@@ -43,8 +49,12 @@ const Counselling = ({ item }: any) => {
     setPlayingRow(item.key);
 
     if (audioUrls[item.key]) {
-      // Use cached audio URL if available
-      setPlayingRow(item.key);
+      // Use cached audio URL if available and replay it
+      if (audioRef.current) {
+        audioRef.current.src = audioUrls[item.key];
+        audioRef.current.play();
+      }
+      // setPlayingRow(item.key);
     } else {
       // Fetch audio from API and cache it
       textToSpeech.mutate({
@@ -86,12 +96,15 @@ const Counselling = ({ item }: any) => {
             transition={{ duration: 1 }}
           >
             <audio
+              ref={audioRef}
               controls
               controlsList="nodownload"
               className="max-w-96 pr-3 h-8 hidden lg:block"
               autoPlay
             >
-              <source src={audioUrls[item.key]} type="audio/mp3" />
+              {audioUrls[item.key] && (
+                <source src={audioUrls[item.key]} type="audio/mp3" />
+              )}
             </audio>
           </motion.div>
         )}
