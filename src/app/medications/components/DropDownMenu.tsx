@@ -76,7 +76,7 @@ const MedListDropdownMenu = ({ item, rows }: DropDownMenuProps) => {
             <DropdownItem
               key="download"
               startContent={<ArrowDownToLineIcon />}
-              onClick={() => {
+              onPress={() => {
                 generateExcel(rows);
                 displayToast(
                   "default",
@@ -92,7 +92,7 @@ const MedListDropdownMenu = ({ item, rows }: DropDownMenuProps) => {
               className="text-danger"
               color="danger"
               startContent={<Trash2Icon />}
-              onClick={async () => {
+              onPress={async () => {
                 deleteUserDrug(item.key.toString()); // Convert the number to a string
                 // deleteDrug.mutate(item.key);
                 displayToast(
