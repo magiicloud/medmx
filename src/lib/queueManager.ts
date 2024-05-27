@@ -4,18 +4,37 @@ import { extractMedLabel } from "@/app/actions/extractMedLabel";
 
 // VercelKV Hobby plan limits file size to 1048576 bytes or 1MB and daily 3000 requests
 // VercelKV requires tls option to be set to an empty object
-const queue = new Bull(
-  "scan-label",
-  `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-  // `${process.env.KV_URL}`,
-  {
-    defaultJobOptions: {
-      removeOnComplete: true,
-      removeOnFail: true,
-    },
-    // redis: { tls: {} }, // Uncomment this line for VercelKV
-  }
-);
+
+// Determine Redis URL based on the environment
+const redisUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.KV_URL // Use Vercel KV URL in production
+    : `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`; // Use local Redis URL in development
+
+// Configure Redis options for Vercel KV
+const redisOptions =
+  process.env.NODE_ENV === "production" ? { redis: { tls: {} } } : {};
+
+const queue = new Bull("scan-label", redisUrl!, {
+  ...redisOptions,
+  defaultJobOptions: {
+    removeOnComplete: true,
+    removeOnFail: true,
+  },
+});
+
+// const queue = new Bull(
+//   "scan-label",
+//   `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+//   // `${process.env.KV_URL}`,
+//   {
+//     defaultJobOptions: {
+//       removeOnComplete: true,
+//       removeOnFail: true,
+//     },
+//     // redis: { tls: {} }, // Uncomment this line for VercelKV
+//   }
+// );
 
 queue.process(async (job, done) => {
   try {
