@@ -1,9 +1,10 @@
 "use server";
 // Imports the Google Cloud client libraries
 import textToSpeech from "@google-cloud/text-to-speech";
+import { getGCPCredentials } from "@/lib/utils";
 
 // Creates clients
-const ttsClient = new textToSpeech.TextToSpeechClient();
+const ttsClient = new textToSpeech.TextToSpeechClient(getGCPCredentials());
 
 export interface TTSData {
   speechString: string;

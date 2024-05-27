@@ -1,4 +1,5 @@
 "use server";
+import { getGCPCredentials } from "@/lib/utils";
 import { DocumentProcessorServiceClient } from "@google-cloud/documentai";
 import sharp from "sharp";
 
@@ -9,7 +10,7 @@ export const extractMedLabel = async (base64Image: string) => {
 
   try {
     // Configure the Google Cloud Document AI client
-    const client = new DocumentProcessorServiceClient();
+    const client = new DocumentProcessorServiceClient(getGCPCredentials());
     const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
     const location = process.env.GOOGLE_CLOUD_LOCATION;
     const processorId = process.env.GOOGLE_CLOUD_PROCESSOR_ID;
