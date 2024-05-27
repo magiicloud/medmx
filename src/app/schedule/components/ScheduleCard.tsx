@@ -15,8 +15,21 @@ const ScheduleCard = async () => {
   const scheduleData = await getUserDrugsAndSchedules(
     session.user.id as string
   );
-  if (!scheduleData) {
-    return null;
+  if (!scheduleData || scheduleData.length === 0) {
+    return (
+      <div className="mt-32 w-screen px-10">
+        <Card className="w-full opacity-60 p-4 rounded-3xl">
+          <CardHeader className="justify-center pb-8 font-bold text-lg leading-loose">
+            SCHEDULE
+          </CardHeader>
+          <CardBody className="px-3 py-0 space-y-8 pb-8">
+            <p className="text-center text-default-400 text-md pt-4">
+              No schedule found. Add a medication to get started.
+            </p>
+          </CardBody>
+        </Card>
+      </div>
+    );
   }
 
   const timeOfDay: string[] = ["morning", "afternoon", "evening", "night"];
