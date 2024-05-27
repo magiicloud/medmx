@@ -1,14 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import {
-  HoveredLink,
-  Menu,
-  MenuItem,
-  ProductItem,
-} from "@/components/ui/navbar-menu";
+import { HoveredLink, Menu, MenuItem } from "@/components/ui/navbar-menu";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import AvatarMenu from "./AvatarMenu";
 import {
   Dropdown,
@@ -79,14 +73,14 @@ function Navbar({ className }: { className?: string }) {
         )}
       >
         <Menu setActive={setActive}>
-          <Link href="/">Home</Link>
+          <HoveredLink href="/">Home</HoveredLink>
           <MenuItem setActive={setActive} active={active} item="Medications">
-            <div className="flex flex-col space-y-4 text-sm">
+            <div className="flex flex-col space-y-4 text-sm px-6">
               <HoveredLink href="/medications">My Medication List</HoveredLink>
               <HoveredLink href="/add-medication">Add Medication</HoveredLink>
             </div>
           </MenuItem>
-          <Link href="/schedule">Schedule</Link>
+          <HoveredLink href="/schedule">Schedule</HoveredLink>
         </Menu>
       </div>
     </>

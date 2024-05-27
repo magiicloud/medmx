@@ -15,7 +15,6 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.1.0",
     "@google-cloud/documentai": "^8.6.0",
-    "@google-cloud/storage": "^7.11.0",
     "@google-cloud/text-to-speech": "^5.2.0",
     "@hookform/resolvers": "^3.3.4",
     "@nextui-org/autocomplete": "^2.0.16",
@@ -51,7 +50,6 @@
     "bull": "^4.12.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "csv-parser": "^3.0.0",
     "exceljs": "^4.4.0",
     "framer-motion": "^11.1.7",
     "lucide-react": "^0.378.0",

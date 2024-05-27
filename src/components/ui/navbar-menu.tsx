@@ -113,9 +113,11 @@ export const HoveredLink = ({ children, ...rest }: any) => {
   return (
     <Link
       {...rest}
-      className="text-neutral-700 dark:text-neutral-200 hover:text-black "
+      className="text-neutral-700 text-center dark:text-neutral-200 hover:text-black "
     >
-      {children}
+      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        {children}
+      </motion.div>
     </Link>
   );
 };
