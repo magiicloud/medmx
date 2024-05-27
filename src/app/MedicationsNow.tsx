@@ -42,6 +42,11 @@ const MedicationsNow = async () => {
     currentTimeOfDay = "night";
   }
 
+  // Filter medications for the current time of day
+  const medicationsForCurrentTime = scheduleData.filter(
+    (item) => item[currentTimeOfDay as keyof ScheduleData]
+  );
+
   return (
     <MotionDiv>
       <div className="grid lg:grid-cols-1 gap-4">
@@ -60,16 +65,14 @@ const MedicationsNow = async () => {
               />
             </CardHeader>
             <CardBody className="px-3 py-0 text-small text-default-400 space-y-8 pb-8">
-              {scheduleData.length === 0 ? (
+              {medicationsForCurrentTime.length === 0 ? (
                 <div className="text-center text-md lg:text-lg">
                   You have no medications scheduled for this time of day.
                 </div>
               ) : (
-                scheduleData.map((item) => {
-                  if (item[currentTimeOfDay as keyof ScheduleData]) {
-                    return <DrugCard key={item.id} userSchedule={item} />;
-                  }
-                })
+                medicationsForCurrentTime.map((item) => (
+                  <DrugCard key={item.id} userSchedule={item} />
+                ))
               )}
             </CardBody>
           </Card>
