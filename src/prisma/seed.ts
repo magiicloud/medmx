@@ -8,98 +8,66 @@ const drugData = [
       "https://www.mediview.sg/keyword/n-zXKQXN/paracetamol/i-Nkr8kGL/A",
     counsellingPointsText:
       "This medication helps to relieve pain or fever. Do not take more than 8 tablets in a day. Do not take with other panadol/paracetamol containing products such as Anarex, Panadol Cough/Cold/Flu. Do not consume alcohol while on paracetamol.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/paracet.mp3",
-    otherResources: "",
-    acute: true,
-    chronic: false,
     auxInstruction: "Take with or without food. Do not exceed 8 in a day.",
   },
   {
     drugName: "LORATADINE 10MG TAB",
-    pilLink: "https://www.healthhub.sg/a-z/medications/ibuprofen",
+    pilLink: "https://www.healthhub.sg/a-z/medications/antihistamine-oral",
     drugImagesLink:
-      "https://www.mediview.sg/keyword/n-zXKQXN/ibuprofen/i-FfDfp99/A",
-    counsellingPointsText: "This medication is for runny nose.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/ibuprofen.mp3",
-    otherResources: "",
-    acute: true,
-    chronic: false,
+      "https://www.mediview.sg/keyword/n-zXKQXN/loratadine/i-TDvGj8R/A",
+    counsellingPointsText:
+      "This medication is for runny nose, itch or allergy.",
     auxInstruction:
       "May be taken with or without food. May affect alertness.Warning - avoid alcoholic drinks.",
   },
   {
     drugName: "DEQUALINIUM 0.25MG LOZENGES",
-    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    pilLink: "https://www.healthhub.sg/a-z/medications/dequalinium%20lozenges",
     drugImagesLink:
-      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
-    counsellingPointsText:
-      "This medication is for your sore throat to suck like a sweet when necessary.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
-    otherResources:
-      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
-    acute: true,
-    chronic: false,
+      "https://www.mediview.sg/keyword/n-zXKQXN/DEQUALINIUM/i-XgDF3pw/A",
+    counsellingPointsText: "This medication is for your sore throat.",
     auxInstruction:
       "May be taken with or without food. To suck and allow to dissolve slowly in the mouth.",
   },
   {
     drugName: "DIFFLAM (BENZYDAMINE 3MG) LOZENGES",
-    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    pilLink:
+      "https://polyclinic.singhealth.com.sg/Documents/SGH%20E83R0%20Benzydamine.pdf",
     drugImagesLink:
-      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+      "https://www.mediview.sg/keyword/n-zXKQXN/DIFFLAM/i-PpVVbx3/A",
     counsellingPointsText:
-      "This medication is for your sore throat to suck like a sweet when necessary. The lozenge can cause numbness of tongue and throat. Avoid hot beverages at least 30mins after taking lozenge as the numbness can cause you to burn your tongue/throat.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
-    otherResources:
-      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
-    acute: true,
-    chronic: false,
+      "This medication is for your sore throat. The lozenge can cause numbness of tongue and throat. Avoid hot beverages at least 30mins after taking lozenge as the numbness can cause you to burn your tongue or throat.",
     auxInstruction:
       "May be taken with or without food. To suck and allow to dissolve slowly in the mouth.",
   },
   {
     drugName: "CHARCOAL 200MG CAP",
-    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    pilLink: "https://www.healthhub.sg/a-z/medications/anti-diarrhoeal",
     drugImagesLink:
-      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+      "https://www.mediview.sg/keyword/n-zXKQXN/charcoal/i-MjjTZsn/A",
     counsellingPointsText:
       "This medication is for your diarrhea. Take half to one hour before food. Take other medicines 2 hours apart. This medication may discolour stools.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
-    otherResources:
-      "https://www.health.harvard.edu/blog/is-metformin-a-wonder-drug-202109222605",
-    acute: true,
-    chronic: false,
     auxInstruction:
       "Take half to one hour before food. Take other medicines 2 hours apart. May discolour stools.",
   },
   {
     drugName: "CLAVULANATE 125MG, AMOXICILLIN 500MG TAB",
-    pilLink: "https://www.healthhub.sg/a-z/medications/metformin",
+    pilLink: "https://www.healthhub.sg/a-z/medications/penicillins-oral",
     drugImagesLink:
-      "https://www.mediview.sg/keyword/n-zXKQXN/metformin/i-x2BL3nZ/A",
+      "https://www.mediview.sg/keyword/n-zXKQXN/AMOXICILLIN/i-Gb2ZRbP/A",
     counsellingPointsText:
       "This is an antibiotic for infection. Some side effects include nausea, vomiting, diarrhea that should be alleviated by taking after food. Take regularly and complete the course. Consult doctor if rashes develop.",
-    counsellingPointsVoiceLink:
-      "https://storage.cloud.google.com/magicloud-medlabel-bucket/counselling-audio/metformin.mp3",
-    otherResources: "",
-    acute: true,
-    chronic: false,
     auxInstruction:
       "Take with or after food. Take regularly and complete the course. Consult doctor if rashes develop.",
   },
 ];
 
 const drugClassData = [
-  { name: "antipyretic" },
-  { name: "analgesic" },
-  { name: "antihistamine" },
+  { name: "fever" },
+  { name: "pain" },
+  { name: "runny nose" },
   { name: "sore throat" },
-  { name: "antidiarrheal" },
+  { name: "diarrhea" },
   { name: "antibiotic" },
 ];
 
@@ -137,73 +105,37 @@ const drugToClassData = [
 const drugEntryData = [
   {
     drugId: 1,
-    method: "Take",
-    unitDose: "Tab",
+    method: "TAKE",
+    unitDose: "TAB",
   },
   {
     drugId: 2,
-    method: "Take",
-    unitDose: "Tab",
+    method: "TAKE",
+    unitDose: "TAB",
   },
   {
     drugId: 3,
-    method: "Suck",
-    unitDose: "Loz",
+    method: "SUCK",
+    unitDose: "LOZ",
   },
   {
     drugId: 4,
-    method: "Suck",
-    unitDose: "Loz",
+    method: "SUCK",
+    unitDose: "LOZ",
   },
   {
     drugId: 5,
-    method: "Take",
-    unitDose: "Cap",
+    method: "TAKE",
+    unitDose: "CAP",
   },
   {
     drugId: 6,
-    method: "Take",
-    unitDose: "Tab",
+    method: "TAKE",
+    unitDose: "TAB",
   },
 ];
 
-// const userDrugData = [
-//   {
-//     userId: 1,
-//     drugId: 1,
-//     dosingInstruction: "Take 2 tablet(s) 4 times a day when required.",
-//   },
-//   {
-//     userId: 1,
-//     drugId: 2,
-//     dosingInstruction: "Take 1 tablet(s) 1 times a day when required.",
-//   },
-//   {
-//     userId: 2,
-//     drugId: 3,
-//     dosingInstruction: "Take 1 tablet(s) 3 times a day.",
-//   },
-// ];
-
-// const usersData = [
-//   {
-//     email: "paloma@diamond.com",
-//     name: "Paloma Diamond",
-//   },
-//   {
-//     email: "lorelai@lynch.com",
-//     name: "Lorelai Lynch",
-//   },
-// ];
-
 async function main() {
-  // Seed users
-  // for (const user of usersData) {
-  //   await prisma.user.create({
-  //     data: user,
-  //   });
-  // }
-
   // Seed drugs
   for (const drug of drugData) {
     await prisma.drug.create({
@@ -231,13 +163,6 @@ async function main() {
       data: drugEntry,
     });
   }
-
-  // Seed user drug entry
-  // for (const userDrug of userDrugData) {
-  //   await prisma.userDrug.create({
-  //     data: userDrug,
-  //   });
-  // }
 }
 
 main()

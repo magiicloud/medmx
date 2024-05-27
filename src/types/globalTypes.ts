@@ -10,10 +10,6 @@ export interface DrugData {
   pilLink: string;
   drugImagesLink: string;
   counsellingPointsText: string;
-  counsellingPointsVoiceLink: string;
-  otherResources: string;
-  acute: boolean;
-  chronic: boolean;
   auxInstruction: string;
   drugClasses: DrugClassData[];
 }
@@ -31,7 +27,6 @@ export interface ScheduleData {
   afternoon: boolean;
   evening: boolean;
   night: boolean;
-  daysOfWeek: string[];
   userDrug: {
     dosingInstruction: string;
     drug: {
