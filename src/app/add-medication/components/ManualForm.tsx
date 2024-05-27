@@ -285,6 +285,8 @@ const ManualForm = () => {
               className="max-w-40 bg-gradient-to-tr from-pink-500 to-yellow-500 self-center md:self-start"
               type="submit"
               fullWidth
+              isDisabled={submitForm.isPending}
+              isLoading={submitForm.isPending}
             >
               Submit
             </Button>

@@ -358,8 +358,9 @@ const ScanForm = () => {
             <Button
               className="max-w-40 bg-[#ff9a76] text-white self-center md:self-start"
               type="submit"
-              isDisabled={scanLabel.isPending}
+              isDisabled={scanLabel.isPending || submitForm.isPending}
               fullWidth
+              isLoading={submitForm.isPending}
             >
               Submit
             </Button>
