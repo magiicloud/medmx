@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import queue from "@/lib/queueManager";
+import queue from "@/app/add-medication/queueManager";
 import { auth } from "@/auth";
 import { convertImageToBase64 } from "@/app/actions/extractMedLabel";
 
@@ -19,6 +19,10 @@ export const POST = async (req: NextRequest) => {
       status: 400,
       error: "Please select a file to be uploaded.",
     });
+  }
+
+  if (!queue) {
+    throw new Error("Queue is not initialized.");
   }
 
   try {

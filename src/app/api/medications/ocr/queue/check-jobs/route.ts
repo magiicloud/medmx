@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import queue from "@/lib/queueManager";
+import queue from "@/app/add-medication/queueManager";
 
 export const GET = async (req: NextRequest) => {
+  if (!queue) {
+    throw new Error("Queue is not initialized.");
+  }
+
   try {
     const pendingJobs = await queue.getJobs(["waiting", "active"]);
     const completedJobs = await queue.getJobs(["completed"]);
