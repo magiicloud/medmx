@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import DrugRowCard from "./DrugCard";
 import { Spinner } from "@nextui-org/spinner";
 import { getRows } from "../util/getRowsColumns";
@@ -17,8 +17,17 @@ const TableDataCard = async () => {
         }
       >
         <Card className="max-w-xl opacity-80 p-4 rounded-3xl">
+          <CardHeader className=" justify-center">
+            <p className="text-center font-bold">Medication List</p>
+          </CardHeader>
           <CardBody className="p-3 text-small text-default-400 space-y-8 pb-8">
-            <DrugRowCard rows={rowData} />
+            {rowData.length === 0 ? (
+              <p className="text-center text-md lg:text-lg">
+                You have no medications in your medication list.
+              </p>
+            ) : (
+              <DrugRowCard rows={rowData} />
+            )}
           </CardBody>
         </Card>
       </Suspense>

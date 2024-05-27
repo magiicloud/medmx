@@ -365,23 +365,6 @@ const ScanForm = () => {
             </Button>
           </form>
         </Form>
-        <Button
-          variant="ghost"
-          onClick={() => {
-            displayToast(
-              "default",
-              "Jobs Completed",
-              <>
-                <Button size="sm" variant="ghost" className="mt-2 mr-2">
-                  <Link href="/add-medication">Click</Link>
-                </Button>
-                to go back to the <b>Add Medication</b> page.
-              </>
-            );
-          }}
-        >
-          Show Toast
-        </Button>
       </motion.div>
     </>
   );
