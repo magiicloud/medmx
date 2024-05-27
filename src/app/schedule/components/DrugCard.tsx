@@ -17,7 +17,7 @@ const DrugCard: React.FC<Props> = ({ userSchedule }) => {
         <CardBody className="px-3 py-0 text-small text-default-400">
           <p>{userSchedule.userDrug.dosingInstruction}</p>
         </CardBody>
-        <CardFooter className="gap-3">
+        <CardFooter className="gap-3 justify-between">
           <p className="text-default-400 text-small">
             {userSchedule.userDrug.drug.auxInstruction}
           </p>

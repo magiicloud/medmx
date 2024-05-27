@@ -39,7 +39,7 @@ const MedicationsNow = async () => {
     <MotionDiv>
       <div className="grid lg:grid-cols-1 gap-4">
         <div key={currentTimeOfDay}>
-          <Card className="max-w-xl opacity-80 p-4 rounded-3xl">
+          <Card className="max-w-xl opacity-80 p-4 rounded-3xl max-h-[560px] overflow-auto md:max-h-[640px] lg:max-h-[740px]">
             <CardHeader className="flex flex-col justify-start gap-x-2 pb-8">
               {currentTimeOfDay === "morning" && <SunriseIcon size={36} />}
               {currentTimeOfDay === "afternoon" && <SunIcon size={36} />}
@@ -49,12 +49,12 @@ const MedicationsNow = async () => {
                 words={`Good ${currentTimeOfDay.toLowerCase()}, ${
                   session.user.name
                 }. These are your ${currentTimeOfDay.toLowerCase()} medications.`}
-                className="p-3 text-lg"
+                className="p-3 text-md lg:text-lg"
               />
             </CardHeader>
             <CardBody className="px-3 py-0 text-small text-default-400 space-y-8 pb-8">
               {scheduleData.length === 0 ? (
-                <div className="text-center text-lg">
+                <div className="text-center text-md lg:text-lg">
                   You have no medications scheduled for this time of day.
                 </div>
               ) : (

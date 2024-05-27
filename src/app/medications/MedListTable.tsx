@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { columns, getRows } from "./util/getRowsColumns";
 import { auth } from "@/auth";
+import Loading from "./loading";
 
 export const MedListTable = async () => {
   // const session = await auth();
@@ -23,7 +24,7 @@ export const MedListTable = async () => {
     <Suspense
       fallback={
         <div className="flex justify-center items-center h-full mt-24">
-          <Spinner />
+          <Loading />
         </div>
       }
     >
