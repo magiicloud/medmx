@@ -2,14 +2,18 @@ import Bull from "bull";
 import prisma from "@/prisma/client";
 import { extractMedLabel } from "@/app/actions/extractMedLabel";
 
+// VercelKV Hobby plan limits file size to 1048576 bytes or 1MB and daily 3000 requests
+// VercelKV requires tls option to be set to an empty object
 const queue = new Bull(
   "scan-label",
   `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+  // `${process.env.KV_URL}`,
   {
     defaultJobOptions: {
       removeOnComplete: true,
       removeOnFail: true,
     },
+    // redis: { tls: {} }, // Uncomment this line for VercelKV
   }
 );
 
