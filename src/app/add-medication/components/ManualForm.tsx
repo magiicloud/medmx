@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { set, z } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@nextui-org/button";
@@ -26,12 +26,7 @@ import {
 } from "@/components/ui/form";
 import { Skeleton } from "@nextui-org/skeleton";
 import useCustomToast from "@/components/useCustomToast";
-import {
-  fetchDrugEntry,
-  fetchDrugId,
-  fetchOcrData,
-  submitFormData,
-} from "../utils";
+import { fetchDrugEntry, fetchDrugId, submitFormData } from "../utils";
 import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
@@ -72,6 +67,7 @@ const ManualForm = () => {
   const [unitDose, setUnitDose] = useState("");
   const { data: DrugData, error, isLoading } = useDrugData();
   const { data: session } = useSession();
+  const { displayToast } = useCustomToast();
 
   const fetchDrugIdMutation = useMutation({
     mutationFn: fetchDrugId,
@@ -108,6 +104,11 @@ const ManualForm = () => {
         drugId: parseInt(drugId),
         dosingInstruction: formData.dosingInstruction,
       });
+      displayToast(
+        "default",
+        "Success",
+        "Added to medication list successfully"
+      );
       console.log("form submitted");
     } catch (error) {
       console.error("Error submitting form:", error);
