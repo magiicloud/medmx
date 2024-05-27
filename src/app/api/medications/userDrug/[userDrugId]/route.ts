@@ -1,4 +1,5 @@
 import { deleteUserDrug } from "@/app/actions/deleteUserDrug";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const DELETE = async (
@@ -18,10 +19,11 @@ export const DELETE = async (
     const deletedDrug = await deleteUserDrug(userDrugId);
     return NextResponse.json(deletedDrug);
   } catch (error) {
+    console.error("Error deleting user drug:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       {
-        status: (error as Error).message === "userDrugId not found" ? 400 : 500,
+        status: getErrorMessage(error) === "userDrugId not found" ? 400 : 500,
       }
     );
   }

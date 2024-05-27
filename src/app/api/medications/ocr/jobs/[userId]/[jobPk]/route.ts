@@ -1,4 +1,5 @@
 import { deleteUserJob } from "@/app/actions/deleteUserJob";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const DELETE = async (
@@ -17,8 +18,8 @@ export const DELETE = async (
     return NextResponse.json(deletedJob);
   } catch (error) {
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: (error as Error).message === "Job ID not found" ? 400 : 500 }
+      { error: getErrorMessage(error) },
+      { status: getErrorMessage(error) === "Job ID not found" ? 400 : 500 }
     );
   }
 };

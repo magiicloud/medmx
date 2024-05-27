@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import queue from "@/app/add-medication/queueManager";
 import { auth } from "@/auth";
 import { convertImageToBase64 } from "@/app/actions/extractMedLabel";
+import { getErrorMessage } from "@/lib/utils";
 
 export const POST = async (req: NextRequest) => {
   const session = await auth();
@@ -48,12 +49,12 @@ export const POST = async (req: NextRequest) => {
       jobId: job.id,
     });
   } catch (error) {
-    console.error("Failed to add job to queue:", error);
+    console.error("Failed to add job to queue:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       {
         status:
-          (error as Error).message === "Please select a file to be uploaded."
+          getErrorMessage(error) === "Please select a file to be uploaded."
             ? 400
             : 500,
       }

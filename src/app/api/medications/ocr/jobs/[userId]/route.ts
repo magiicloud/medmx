@@ -1,4 +1,5 @@
 import { getUserJobs } from "@/app/actions/getUserJobs";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
@@ -16,8 +17,8 @@ export const GET = async (
     return NextResponse.json(jobs);
   } catch (error) {
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: (error as Error).message === "UserID not found" ? 400 : 500 }
+      { error: getErrorMessage(error) },
+      { status: getErrorMessage(error) === "UserID not found" ? 400 : 500 }
     );
   }
 };

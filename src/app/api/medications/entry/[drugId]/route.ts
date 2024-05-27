@@ -1,4 +1,5 @@
 import { getDrugEntry } from "@/app/actions/getDrugEntry";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
@@ -15,9 +16,9 @@ export const GET = async (
     const drugs = await getDrugEntry(Number(drugId));
     return NextResponse.json(drugs);
   } catch (error) {
-    console.error("Error fetching drug entry:", error);
+    console.error("Error fetching drug entry:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       { status: 500 }
     );
   }

@@ -28,6 +28,7 @@ import { Skeleton } from "@nextui-org/skeleton";
 import useCustomToast from "@/components/useCustomToast";
 import { fetchDrugEntry, fetchDrugId, submitFormData } from "../utils";
 import { useSession } from "next-auth/react";
+import { getErrorMessage } from "@/lib/utils";
 
 const formSchema = z.object({
   drugName: z.string().min(1, "Medication name cannot be blank"),
@@ -111,7 +112,12 @@ const ManualForm = () => {
       );
       console.log("form submitted");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting form:", getErrorMessage(error));
+      displayToast(
+        "destructive",
+        "Form submission failed",
+        `Error: ${getErrorMessage(error)}`
+      );
     }
   };
 

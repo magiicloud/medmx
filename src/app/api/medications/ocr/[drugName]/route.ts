@@ -1,4 +1,5 @@
 import { getDrugByName } from "@/app/actions/getDrugByName";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
@@ -20,8 +21,8 @@ export const GET = async (
   } catch (error) {
     console.error("Error fetching drug:", error);
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: (error as Error).message === "Drug not found" ? 404 : 500 }
+      { error: getErrorMessage(error) },
+      { status: getErrorMessage(error) === "Drug not found" ? 404 : 500 }
     );
   }
 };

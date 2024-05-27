@@ -5,6 +5,7 @@ import useCustomToast from "@/components/useCustomToast";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Button } from "@nextui-org/button";
+import { getErrorMessage } from "@/lib/utils";
 
 const useJobStatusChecker = () => {
   const queryClient = useQueryClient();
@@ -17,7 +18,13 @@ const useJobStatusChecker = () => {
       const { pendingCount } = response.data.data;
       return pendingCount;
     } catch (error) {
-      console.error("Failed to check for pending jobs:", error);
+      console.error(
+        "Failed to check for pending jobs:",
+        getErrorMessage(error)
+      );
+      throw new Error(
+        `Failed to check for pending jobs: ${getErrorMessage(error)}`
+      );
       return null; // Return null in case of error
     }
   };
@@ -51,7 +58,10 @@ const useJobStatusChecker = () => {
           clearInterval(interval);
         }
       } catch (error) {
-        console.error("Failed to fetch job statuses:", error);
+        console.error("Failed to fetch job statuses:", getErrorMessage(error));
+        throw new Error(
+          `Failed to fetch job statuses: ${getErrorMessage(error)}`
+        );
         clearInterval(interval);
       }
     }, 5000); // Poll every 5 seconds

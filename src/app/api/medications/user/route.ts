@@ -1,4 +1,5 @@
 import { addUserDrugWithSchedule } from "@/app/actions/addUserDrugWithSchedule";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
@@ -30,11 +31,15 @@ export const POST = async (req: NextRequest) => {
       addScheduleData: result.addSchedule,
     });
   } catch (error) {
+    console.error(
+      "Error adding user drug with schedule:",
+      getErrorMessage(error)
+    );
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       {
         status:
-          (error as Error).message ===
+          getErrorMessage(error) ===
           "Missing required fields: userId, drugId, or dosingInstruction"
             ? 400
             : 500,

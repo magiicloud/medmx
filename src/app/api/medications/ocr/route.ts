@@ -4,6 +4,7 @@ import {
   convertImageToBase64,
   extractMedLabel,
 } from "@/app/actions/extractMedLabel";
+import { getErrorMessage } from "@/lib/utils";
 
 // export const extractMedLabel = async (file: File) => {
 //   if (!file) {
@@ -79,12 +80,12 @@ export const POST = async (req: NextRequest) => {
       data: extractedMedLabel,
     });
   } catch (error) {
-    console.error("Failed to extract label:", error);
+    console.error("Failed to extract label:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       {
         status:
-          (error as Error).message === "Please select a file to be uploaded."
+          getErrorMessage(error) === "Please select a file to be uploaded."
             ? 400
             : 500,
       }

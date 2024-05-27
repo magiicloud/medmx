@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import queue from "@/app/add-medication/queueManager";
+import { getErrorMessage } from "@/lib/utils";
 
 export const GET = async (req: NextRequest) => {
   if (!queue) {
@@ -21,9 +22,9 @@ export const GET = async (req: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch job statuses:", error);
+    console.error("Failed to fetch job statuses:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       { status: 500 }
     );
   }

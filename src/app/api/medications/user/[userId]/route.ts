@@ -1,4 +1,5 @@
 import { getUserDrugsByUserId } from "@/app/actions/getUserDrugsByUserId";
+import { getErrorMessage } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
@@ -15,9 +16,10 @@ export const GET = async (
     const drugs = await getUserDrugsByUserId(userId);
     return NextResponse.json(drugs);
   } catch (error) {
+    console.error("Error fetching user drugs:", getErrorMessage(error));
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: (error as Error).message === "UserID not found" ? 400 : 500 }
+      { error: getErrorMessage(error) },
+      { status: getErrorMessage(error) === "UserID not found" ? 400 : 500 }
     );
   }
 };

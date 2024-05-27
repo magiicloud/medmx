@@ -93,11 +93,11 @@ if (!process.env.NEXT_PUBLIC_IS_BUILD) {
   });
 
   queue.on("error", (error) => {
-    console.error(`error: ${error.message}`);
+    console.error(`error: ${getErrorMessage(error)}`);
   });
 
   queue.on("failed", (job, error) => {
-    console.error(`Job ${job.id} failed with error: ${error.message}`);
+    console.error(`Job ${job.id} failed with error: ${getErrorMessage(error)}`);
   });
 } else {
   queue = new NoOpQueue();

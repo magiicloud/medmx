@@ -3,6 +3,7 @@ import {
   convertTextToSpeech,
   TTSData,
 } from "@/app/actions/convertTextToSpeech";
+import { getErrorMessage } from "@/lib/utils";
 
 export const POST = async (req: NextRequest) => {
   const ttsData: TTSData = await req.json();
@@ -19,12 +20,15 @@ export const POST = async (req: NextRequest) => {
       tts,
     });
   } catch (error) {
-    console.error("Error during text-to-speech conversion:", error);
+    console.error(
+      "Error during text-to-speech conversion:",
+      getErrorMessage(error)
+    );
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: getErrorMessage(error) },
       {
         status:
-          (error as Error).message === "Missing counselling text and file name."
+          getErrorMessage(error) === "Missing counselling text and file name."
             ? 400
             : 500,
       }

@@ -38,7 +38,7 @@ import { deleteJob } from "../utils";
 import { Card, CardBody } from "@nextui-org/card";
 import { Spinner } from "@nextui-org/spinner";
 import { Tooltip } from "@nextui-org/tooltip";
-import Link from "next/link";
+import { getErrorMessage } from "@/lib/utils";
 
 const formSchema = z.object({
   drugName: z.string().min(1, "Drug name cannot be blank"),
@@ -135,7 +135,12 @@ const ScanForm = () => {
       );
       console.log("form submitted");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting form:", getErrorMessage(error));
+      displayToast(
+        "destructive",
+        "Form submission failed",
+        `Error: ${getErrorMessage(error)}`
+      );
     }
   };
 

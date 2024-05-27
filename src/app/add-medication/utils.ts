@@ -1,5 +1,7 @@
 import axios from "axios";
 import { SubmittedData } from "./types";
+import { getErrorMessage } from "@/lib/utils";
+import { get } from "http";
 
 export const fetchOcrData = async (
   file: File,
@@ -29,8 +31,8 @@ export const fetchOcrData = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error uploading file:", error);
-    throw error;
+    console.error("Error uploading file:", getErrorMessage(error));
+    throw new Error(`Error uploading file: ${getErrorMessage(error)}`);
   }
 };
 
@@ -42,8 +44,8 @@ export const fetchDrugId = async (
     const response = await axios.get(`/api/medications/ocr/${encodedDrugName}`);
     return response.data;
   } catch (error) {
-    console.error("Error getting Drug ID:", error);
-    throw error;
+    console.error("Error getting Drug ID:", getErrorMessage(error));
+    throw new Error(`Error getting Drug ID: ${getErrorMessage(error)}`);
   }
 };
 
@@ -53,8 +55,8 @@ export const fetchDrugEntry = async (drugId: string) => {
     const response = await axios.get(`/api/medications/entry/${encodedDrugId}`);
     return response.data;
   } catch (error) {
-    console.error("Error getting Drug ID:", error);
-    throw error;
+    console.error("Error getting Drug ID:", getErrorMessage(error));
+    throw new Error(`Error getting Drug ID: ${getErrorMessage(error)}`);
   }
 };
 
@@ -63,14 +65,19 @@ export const submitFormData = async (submittedData: SubmittedData) => {
     const response = await axios.post("/api/medications/user", submittedData);
     return response.data;
   } catch (error) {
-    console.error("Error submitting form:", error);
-    throw error;
+    console.error("Error submitting form:", getErrorMessage(error));
+    throw new Error(`Error submitting form: ${getErrorMessage(error)}`);
   }
 };
 
 export const deleteJob = async (userId: string, jobPk: number) => {
-  const response = await axios.delete(
-    `/api/medications/ocr/jobs/${userId}/${jobPk}`
-  );
-  return response.data;
+  try {
+    const response = await axios.delete(
+      `/api/medications/ocr/jobs/${userId}/${jobPk}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting job:", getErrorMessage(error));
+    throw new Error(`Error deleting job: ${getErrorMessage(error)}`);
+  }
 };
