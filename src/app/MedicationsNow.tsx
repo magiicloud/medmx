@@ -21,8 +21,15 @@ const MedicationsNow = async () => {
     return null;
   }
 
-  // Determine the current time of day
-  const currentHour = new Date().getHours();
+  // Determine the current time of day in Singapore
+  const currentHour = parseInt(
+    new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Singapore",
+    }).format(new Date())
+  );
+
   let currentTimeOfDay = "";
 
   if (currentHour >= 6 && currentHour < 12) {
