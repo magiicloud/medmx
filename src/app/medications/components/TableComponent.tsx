@@ -25,8 +25,6 @@ export interface RowData {
   pil: string;
   drugImage: string;
   counsellingPointsText: string;
-  counsellingPointsVoiceLink: string;
-  otherResources: string | null;
   drugClass: string[];
 }
 

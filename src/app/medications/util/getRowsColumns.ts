@@ -54,8 +54,6 @@ export const getRows = async (): Promise<RowData[] | null> => {
     pil: item.drug.pilLink,
     drugImage: item.drug.drugImagesLink,
     counsellingPointsText: item.drug.counsellingPointsText,
-    counsellingPointsVoiceLink: item.drug.counsellingPointsVoiceLink,
-    otherResources: item.drug.otherResources,
     drugClass: item.drug.drugClasses.map((dc) => dc.drugClass.name),
   }));
   revalidatePath("/medications");
