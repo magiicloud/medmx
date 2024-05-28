@@ -1,4 +1,4 @@
-# Tech Stack for MedMx
+# Tech Stack
 
 <div style="display: flex;">
 
@@ -17,6 +17,7 @@
 - ![Framer Motion](https://img.shields.io/badge/Framer%20Motion-0055FF?logo=framer&logoColor=white)
 - ![Lucide React](https://img.shields.io/badge/Lucide%20React-FBBF24?logo=react&logoColor=white)
 - ![Radix UI](https://img.shields.io/badge/Radix%20UI-111111?logo=radixui&logoColor=white)
+- ![TanStack React Query](https://img.shields.io/badge/TanStack%20React%20Query-FF4154?logo=reactquery&logoColor=white)
 - ![Simplex Noise](https://img.shields.io/badge/Simplex%20Noise-000000?logo=javascript&logoColor=white)
 
 </div>
@@ -30,12 +31,14 @@
 - ![Bull](https://img.shields.io/badge/Bull-ED1C24?logo=bull&logoColor=white)
 - ![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white)
 - ![Supabase Database](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)
-- ![TanStack React Query](https://img.shields.io/badge/TanStack%20React%20Query-FF4154?logo=reactquery&logoColor=white)
-- ![Zod](https://img.shields.io/badge/Zod-000000?logo=typescript&logoColor=white)
-- ![Vercel KV](https://img.shields.io/badge/@vercel/kv-000000?logo=vercel&logoColor=white)
-- ![ExcelJS](https://img.shields.io/badge/ExcelJS-217346?logo=microsoftexcel&logoColor=white)
-- ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 - ![Google Cloud Document AI](https://img.shields.io/badge/Google%20Cloud-4285F4?logo=googlecloud&logoColor=white)
 - ![Google Cloud Text-to-Speech](https://img.shields.io/badge/Google%20Cloud%20Text--to--Speech-4285F4?logo=googlecloud&logoColor=white)
+- ![ExcelJS](https://img.shields.io/badge/ExcelJS-217346?logo=microsoftexcel&logoColor=white)
+- ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+- ![Zod](https://img.shields.io/badge/Zod-000000?logo=typescript&logoColor=white)
+- ![Vercel KV](https://img.shields.io/badge/@vercel/kv-000000?logo=vercel&logoColor=white)
+- ![Sharp](https://img.shields.io/badge/Sharp-000000?logo=sharp&logoColor=white)
+
+</div>
 
 </div>

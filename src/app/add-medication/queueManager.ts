@@ -7,24 +7,24 @@ import { getErrorMessage } from "../../lib/utils";
 // VercelKV requires tls option to be set to an empty object
 
 // Define a No-Op Queue class for the build process
-class NoOpQueue {
-  async getJobs() {
-    return [];
-  }
+// class NoOpQueue {
+//   async getJobs() {
+//     return [];
+//   }
 
-  async add() {
-    return {
-      id: "noop",
-      data: {},
-      opts: {},
-    };
-  }
+//   async add() {
+//     return {
+//       id: "noop",
+//       data: {},
+//       opts: {},
+//     };
+//   }
 
-  process() {}
-  on() {}
-}
+//   process() {}
+//   on() {}
+// }
 
-let queue: Queue | NoOpQueue;
+let queue: Queue;
 
 // Only initialize the queue if not in build process
 if (!process.env.NEXT_PUBLIC_IS_BUILD) {
@@ -99,7 +99,12 @@ if (!process.env.NEXT_PUBLIC_IS_BUILD) {
   queue.on("failed", (job, error) => {
     console.error(`Job ${job.id} failed with error: ${getErrorMessage(error)}`);
   });
+  queue.on("stalled", (job) => {
+    console.error(
+      `Job ${job.id} stalled with data: ${JSON.stringify(job.data, null, 2)}`
+    );
+  });
 } else {
-  queue = new NoOpQueue();
+  queue = new Bull("noop");
 }
 export default queue;

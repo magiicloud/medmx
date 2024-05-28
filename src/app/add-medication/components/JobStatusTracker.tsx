@@ -64,7 +64,7 @@ const useJobStatusChecker = () => {
         );
         clearInterval(interval);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 10000); // Poll every 10 seconds
 
     // Store the interval ID in the ref
     intervalRef.current = interval;

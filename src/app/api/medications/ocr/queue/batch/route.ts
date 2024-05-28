@@ -34,12 +34,8 @@ export const POST = async (req: NextRequest) => {
         userId: session!.user!.id,
       },
       {
-        removeOnComplete: {
-          age: 300, // // Clean up the job after 5 minutes
-        },
-        removeOnFail: {
-          age: 300,
-        },
+        removeOnComplete: true,
+        removeOnFail: true,
         attempts: 3, // Retry failed jobs up to 3 times
       }
     );
