@@ -6,25 +6,7 @@ import { getErrorMessage } from "../../lib/utils";
 // VercelKV Hobby plan limits file size to 1048576 bytes or 1MB and daily 3000 requests
 // VercelKV requires tls option to be set to an empty object
 
-// Define a No-Op Queue class for the build process
-// class NoOpQueue {
-//   async getJobs() {
-//     return [];
-//   }
-
-//   async add() {
-//     return {
-//       id: "noop",
-//       data: {},
-//       opts: {},
-//     };
-//   }
-
-//   process() {}
-//   on() {}
-// }
-
-let queue: Queue;
+let queue: Queue | undefined;
 
 // Only initialize the queue if not in build process
 if (!process.env.NEXT_PUBLIC_IS_BUILD) {
@@ -104,7 +86,5 @@ if (!process.env.NEXT_PUBLIC_IS_BUILD) {
       `Job ${job.id} stalled with data: ${JSON.stringify(job.data, null, 2)}`
     );
   });
-} else {
-  queue = new Bull("noop");
 }
 export default queue;
