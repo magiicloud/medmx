@@ -7,6 +7,7 @@ export const extractMedLabel = async (base64Image: string) => {
   if (!base64Image) {
     throw new Error("Please select a file to be uploaded.");
   }
+  console.log("Starting extractMedLabel with image size:", base64Image.length);
 
   try {
     // Configure the Google Cloud Document AI client
@@ -15,6 +16,7 @@ export const extractMedLabel = async (base64Image: string) => {
     const location = process.env.GOOGLE_CLOUD_LOCATION;
     const processorId = process.env.GOOGLE_CLOUD_PROCESSOR_ID;
     const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    console.log("Google Cloud Document AI client configured");
     const request = {
       name,
       rawDocument: {
@@ -22,12 +24,16 @@ export const extractMedLabel = async (base64Image: string) => {
         mimeType: "image/jpeg",
       },
     };
+    console.log("Sending request to Google Cloud Document AI");
 
     // Process the document with Google Cloud Document AI
     const [result] = await client.processDocument(request);
 
+    console.log("Received response from Google Cloud Document AI");
+
     // Extract only the required fields
     const entities = result.document?.entities;
+    console.log("Entities received:", entities);
     const extractedMedLabel = {
       drugName: "",
       dosingInstruction: "",
@@ -46,7 +52,7 @@ export const extractMedLabel = async (base64Image: string) => {
         }
       }
     }
-
+    console.log("Extracted medication label:", extractedMedLabel);
     return extractedMedLabel;
   } catch (error) {
     console.error("Error extracting label:", error);
