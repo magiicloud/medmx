@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import queue from "@/app/add-medication/queueManager";
+// import queue from "@/app/add-medication/queueManager";
 import { getErrorMessage } from "@/lib/utils";
+import getQueue from "@/app/add-medication/queueManager";
 
 export const GET = async (req: NextRequest) => {
+  const queue = getQueue();
   if (!queue) {
     throw new Error("Queue is not initialized.");
   }

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import queue from "@/app/add-medication/queueManager";
+// import queue from "@/app/add-medication/queueManager";
 import { auth } from "@/auth";
 import { convertImageToBase64 } from "@/app/actions/extractMedLabel";
 import { getErrorMessage } from "@/lib/utils";
+import getQueue from "@/app/add-medication/queueManager";
 
 export const POST = async (req: NextRequest) => {
+  const queue = getQueue();
   const session = await auth();
   if (!session || !session.user) {
     return NextResponse.json({
