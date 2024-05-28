@@ -6,7 +6,7 @@ import { getErrorMessage } from "../../lib/utils";
 // VercelKV Hobby plan limits file size to 1048576 bytes or 1MB and daily 3000 requests
 // VercelKV requires tls option to be set to an empty object
 
-let queue: Queue | undefined;
+let queue: Queue | undefined = undefined;
 
 // Only initialize the queue if not in build process
 if (!process.env.NEXT_PUBLIC_IS_BUILD) {
@@ -17,7 +17,6 @@ if (!process.env.NEXT_PUBLIC_IS_BUILD) {
     process.env.NODE_ENV === "production"
       ? process.env.KV_URL // Use Vercel KV URL in production
       : `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`; // Use local Redis URL in development
-  console.log("Redis URL:", redisUrl);
 
   // Configure Redis options for Vercel KV
   const redisOptions =
@@ -111,6 +110,7 @@ if (!process.env.NEXT_PUBLIC_IS_BUILD) {
     console.error("Failed to initialize queue:", getErrorMessage(initError));
   }
 } else {
+  const queue = undefined;
   console.log("Build process detected, not initializing queue");
 }
 

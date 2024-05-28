@@ -28,6 +28,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const base64Image = await convertImageToBase64(file);
+    console.log("Adding job to queue");
     const job = await queue.add(
       {
         file: base64Image,
